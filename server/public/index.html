@@ -16,7 +16,7 @@
     const socket = new WebSocket(`ws://${server}`)
 
     socket.addEventListener('open', (event) => {
-        console.log('connected to webSocket')
+        console.log('connected to webSocket') 
     })
     socket.addEventListener('message', (event) => { 
         console.log(`incoming:${event.data}`);
