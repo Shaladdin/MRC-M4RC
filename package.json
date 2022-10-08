@@ -1,17 +1,17 @@
 {
   "name": "mrc-m4rc",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "source code of mtc-m4rc",
+  "main": "server/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nodemon server/index.js",
+    "start": "node server/index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Shaladdin/MRC-M4RC.git"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Shalladin.js",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Shaladdin/MRC-M4RC/issues"
