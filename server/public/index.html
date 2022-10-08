@@ -12,7 +12,7 @@
     <button onclick="socket.send('yo wussup');">hoh badag</button>
 </body>
 <script>
-    const server = 'localhost', sport = 4000;
+    const server = window.location.hostname, sport = 4000;
     const socket = new WebSocket(`ws://${server}:${sport}`)
 
     socket.addEventListener('open', (event) => {
