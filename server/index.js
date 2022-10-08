@@ -11,8 +11,8 @@ const port = 8089;
 
 const app = express();
 const server = https.createServer({
-    key: Fs.readFileSync(`${__dirname}\\sslcert\\key.pem`),
-    cert: Fs.readFileSync(`${__dirname}\\sslcert\\cert.pem`)
+    key: Fs.readFileSync(`${__dirname}/sslcert/key.pem`),
+    cert: Fs.readFileSync(`${__dirname}/sslcert/cert.pem`)
 }, app);
 
 const wss = new WebSocket.Server({ server:server });
