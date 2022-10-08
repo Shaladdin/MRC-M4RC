@@ -16,6 +16,6 @@ wss.on('connection', (ws) => {
     })
 })
 
-app.use(express.static(`public`));
+app.use(express.static(`${__dirname}/public`));
 
 app.listen(port1, () => { console.log(`app is up on port ${port1}!`); })
