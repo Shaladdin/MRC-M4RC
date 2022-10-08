@@ -1,13 +1,27 @@
+"use strict";
+
+require('dotenv').config({ path: __dirname + '\\.env' });
+
+
+const Fs = require('fs');
 const express = require('express');
-const http = require('http');
+const https = require('http');
 const port = 3000;
 
+
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer({
+    ssl: true,
+    key: Fs.readFileSync(`${__dirname}${process.env.KEY}`),
+    cert: Fs.readFileSync(`${__dirname}${process.env.CERT}`)
+}, app);
 
 const WebSocket = require('ws');
 const { WebSocketServer } = WebSocket;
 const wss = new WebSocketServer({ server: server });
+
+
+
 
 wss.on('connection', (ws) => {
     console.log('connected');
