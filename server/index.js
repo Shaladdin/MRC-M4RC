@@ -1,12 +1,13 @@
 const express = require('express');
-
-
-const port1 = 3000, port2 = 4000;
+const http = require('http');
+const port = 3000;
 
 const app = express();
+const server = http.createServer(app);
+
 const WebSocket = require('ws');
 const { WebSocketServer } = WebSocket;
-const wss = new WebSocketServer({ port: port2 });
+const wss = new WebSocketServer({ server: server });
 
 wss.on('connection', (ws) => {
     console.log('connected');
@@ -18,4 +19,4 @@ wss.on('connection', (ws) => {
 
 app.use(express.static(`${__dirname}/public`));
 
-app.listen(port1, () => { console.log(`app is up on port ${port1}!`); })
+server.listen(port, () => { console.log(`server is up on port ${port}!`); })

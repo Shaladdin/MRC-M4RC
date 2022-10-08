@@ -4,7 +4,7 @@
   "description": "source code of mtc-m4rc",
   "main": "server/index.js",
   "scripts": {
-    "test": "nodemon server/index.js",
+    "test": "nodemon nodemon -e * server/index.js",
     "start": "node server/index.js"
   },
   "repository": {
