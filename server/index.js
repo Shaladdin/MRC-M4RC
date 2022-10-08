@@ -6,17 +6,16 @@ const https = require('https');
 const express = require('express');
 
 require('dotenv').config({ path: __dirname + '\\.env' });
-// require('dotenv').config({ path: __dirname + '\\sslcert\\.env' });
 
 const port = 8089;
 
 const app = express();
 const server = https.createServer({
-    key: Fs.readFileSync(`${__dirname}${process.env.KEY}`),
-    cert: Fs.readFileSync(`${__dirname}${process.env.CERT}`)
+    key: Fs.readFileSync(`${__dirname}\\sslcert\\key.pem`),
+    cert: Fs.readFileSync(`${__dirname}\\sslcert\\cert.pem`)
 }, app);
 
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ server:server });
 
 
 wss.on('connection', (ws) => {
