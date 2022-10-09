@@ -9,21 +9,22 @@
 </head>
 
 <body>
-    <button onclick="socket.send('yo wussup');">hoh badag</button>
+    <button>hoh badag</button>
 </body>
 <script>
     async function run() {
         const isSecure = window.location.protocol == 'https';
         const server = window.location.host;
 
-        const socket = new WebSocket(`ws${isSecure ?'s':''}://${server}`);
+        const socket = new WebSocket(`ws${isSecure ? 's' : ''}://${server}`);
 
         socket.addEventListener('open', (event) => {
             console.log('connected to webSocket')
         })
         socket.addEventListener('message', (event) => {
-            console.log(`incoming:${event.data}`);
+            console.log(`incoming: ${event.data}`);
         })
+        document.getElementsByTagName('button')[0].addEventListener('click', (event) => { socket.send('hello world') });
     }
     run();
 </script>

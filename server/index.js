@@ -17,7 +17,7 @@ const wss = new WebSocket.Server({ server: server });
 wss.on('connection', (ws) => {
     console.log('connected');
     ws.on('message', (msg) => {
-        console.log(`msg${msg}`);
+        console.log(`msg: ${msg}`);
         ws.send(`ya got it: ${msg}`);
     })
 })
