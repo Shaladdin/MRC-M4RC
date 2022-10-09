@@ -2,7 +2,7 @@
 
 const WebSocket = require('ws');
 const Fs = require('fs');
-const https = require('https');
+const http = require('http');
 const express = require('express');
 
 require('dotenv').config({ path: __dirname + '\\.env' });
@@ -10,13 +10,9 @@ require('dotenv').config({ path: __dirname + '\\.env' });
 const port = 8089;
 
 const app = express();
-const server = https.createServer({
-    key: Fs.readFileSync(`${__dirname}/sslcert/key.pem`),
-    cert: Fs.readFileSync(`${__dirname}/sslcert/cert.pem`)
-}, app);
+const server = http.createServer(app);
 
-const wss = new WebSocket.Server({ server:server });
-
+const wss = new WebSocket.Server({ server: server });
 
 wss.on('connection', (ws) => {
     console.log('connected');
