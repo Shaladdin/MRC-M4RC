@@ -1,13 +1,12 @@
 "use strict";
 
 const WebSocket = require('ws');
-const Fs = require('fs');
 const http = require('http');
 const express = require('express');
 
 require('dotenv').config({ path: __dirname + '\\.env' });
 
-const port = 8089;
+const port = 8080;
 
 const app = express();
 const server = http.createServer(app);
@@ -15,10 +14,10 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server: server });
 
 wss.on('connection', (ws) => {
-    console.log('connected');
+    console.log(`connected to ${ws.url}`);
+    ws.send('connected');
     ws.on('message', (msg) => {
         console.log(`msg: ${msg}`);
-        ws.send(`ya got it: ${msg}`);
     })
 })
 

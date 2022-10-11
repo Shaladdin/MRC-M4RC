@@ -21,7 +21,7 @@
         console.log('connected to webSocket')
     })
     socket.addEventListener('message', (event) => {
-        console.log(`incoming: ${event.data}`);
+        console.log(`incoming:\n ${event.data}`);
     })
     document.getElementsByTagName('button')[0].addEventListener('click', (event) => { socket.send('hello world') });
 </script>
