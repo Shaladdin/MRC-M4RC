@@ -9,21 +9,28 @@
 </head>
 
 <body>
-    <button>hoh badag</button>
+    <textarea name="input" id="wsIn" cols="30" rows="10">
+{
+    "msg":"identity",
+    "device":"smartHome"
+}
+    </textarea>
+    <button>send</button>
 </body>
+<script src="./js/ws.js"></script>
 <script>
     const isSecure = window.location.protocol == 'https:';
     const server = window.location.host;
-
-    const socket = new WebSocket(`ws${isSecure ? 's' : ''}://${server}`);
-
-    socket.addEventListener('open', (event) => {
-        console.log('connected to webSocket')
-    })
-    socket.addEventListener('message', (event) => {
-        console.log(`incoming:\n ${event.data}`);
-    })
-    document.getElementsByTagName('button')[0].addEventListener('click', (event) => { socket.send('hello world') });
+    const input = document.getElementById('wsIn');
+    init().then(async(socket) => {
+        document.getElementsByTagName('button')[0].addEventListener('click', async (event) => {
+            if (socket.readyState === socket.CLOSED || socket.readyState === socket.CLOSING) {
+                console.log('recconecting');
+                socket = await init();
+            }
+            socket.send(input.value)
+        })
+    });
 </script>
 
 </html>
