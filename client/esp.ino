@@ -81,14 +81,22 @@ void setup()
     // run callback when messages are received
     ws.onMessage([&](WebsocketsMessage message)
                  {
-                     Serial.println(F("Got Message: ") + message.data());
-                     char *type, details;
+                    String msg = String(message.data());
+                     Serial.println(F("Got Message: ") + msg);
+                     char* bait, msgType, details; // leave the bait here, no one knows why, but yet it work
                      {
                         DynamicJsonDocument doc(ESP.getMaxFreeBlockSize() - 512);
-                        deserializeJson(doc, message);
-                        type = doc[F("msg")];
+                        DeserializationError err =  deserializeJson(doc, msg);
+                        if(err){
+                            Serial.print(F("deserializeJson() failed with code "));
+                            Serial.println(err.f_str());
+                            return;
+                        }
+                        msgType = doc[F("msg")];
                         details = doc[F("err")]; 
-                     } });
+                     }
+                     if(String(msgType) == F("connected"))
+                     activated = true; });
 
     // self identify to server
     String identifyMsg;
@@ -117,7 +125,7 @@ void loop()
                    F("\nco:\t") + String(co) +
                    F("\nsmoke:\t") + String(smoke) +
                    F("\ntemp:\t") + String(temp) +
-                   F("\nhumidity:\t") + String(humidity) +
+                   F("\nhumid:\t") + String(humidity) +
                    F("\nhIndex:\t") + String(hIndex));
 
     // code stop sign

@@ -35,9 +35,7 @@ const device = {
                         const { suhu, gas } = res.data;
                         data.suhu = suhu;
                         data.gas = gas;
-
                         console.log(data);
-
                         return;
                     }
                     ws.send(stringify({
@@ -50,11 +48,41 @@ const device = {
         data: {
             suhu: undefined,
             gas: undefined,
-        }
-    }
+        },
+    },
 };
 
+const usersModule = {
+    user: class {
+        constructor(ws) {
+            this.ws = ws;
+            this.id = ws.device;
+        }
+        run() {
+            const { user } = device;
+            const { ws, data } = user;
 
+            // modes code(switch)
+            const mode = {
+                currentMode: "init",
+                script: {
+                    sensorStream: () => {
+                        console.log("entering stream");
+                    }
+                },
+            };
+            //Switch the mode 
+            ws.on('message', (msg) => {
+                let res = objify(msg);
+                if (res.msg === "change mode")
+                    mode.script[res.mode]();
+            })
+        }
+    },
+    users: [],
+}
+
+// depricated:
 // // if all device is connected
 // var alreadyActive = false;
 // function activateSystem() {
@@ -83,8 +111,8 @@ wss.on('connection', (ws) => {
     ws.allowStream = false;
     ws.device = "unknown";
     // send log
-    const log = (logout) => { console.log(`${ws.device}: ${logout}`) };
-
+    ws.log = (logout) => { console.log(`${ws.device}: ${logout}`) };
+    const { log } = ws;
     // code for starting connection and handle web client
     ws.on('message', (msg) => {
         // turn it into json
@@ -101,17 +129,22 @@ wss.on('connection', (ws) => {
             return;
         }
 
+        // client connect request
+        if (res.msg === "connectClient") {
+            if (alreadyConnected(ws)) return;
+            ws.device = `client:${getUniqueID()}`
+            usersModule.users.push(new usersModule.user(ws));
+            ws.send(stringify({
+                msg:"connected"
+            }))
+            console.log(usersModule.users);
+            return;
+        }
+
         // identify request
         if (res.msg === 'identity') {
             // if already connected
-            if (ws.device != 'unknown') {
-                ws.send(stringify({
-                    msg: "error",
-                    err: `acces denied, this device already connected as ${ws.device}`
-                }));
-                log('relogin attemp, denied');
-                return;
-            }
+            if (alreadyConnected(ws)) return;
             // check if device type legit
             if (!Object.keys(device).includes(res.device)) {
                 ws.send(stringify({
@@ -122,7 +155,7 @@ wss.on('connection', (ws) => {
                 return;
             }
             // check if other device already connected as ws.device
-            if (device[res.device].ws !== undefined) {
+            if (device[res.device].ws !== undefined && res.device != 'user') {
                 ws.send(stringify({
                     msg: "error",
                     err: `a device already connected as ${res.device}`
@@ -135,7 +168,7 @@ wss.on('connection', (ws) => {
             device[ws.device].ws = ws;
             ws.allowed = true;
             ws.send(stringify({
-                msg: "sucsesfull",
+                msg: "connected",
                 details: `connected sucsesfully as ${ws.device}`
             }))
             log('device connected');
@@ -163,13 +196,34 @@ wss.on('connection', (ws) => {
 
 
 // common function
-// turnstring into json SAFELY 
+// turn string into json SAFELY 
 function objify(str) {
     try {
         return jsonify(String(str));
     } catch (e) {
         return false;
     }
+}
+
+// make id for websocket
+function getUniqueID() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+    return s4() + s4() + '-' + s4();
+};
+
+// check if device already connected
+function alreadyConnected(ws) {
+    if (ws.device != 'unknown') {
+        ws.send(stringify({
+            msg: "error",
+            err: `acces denied, this device already connected as ${ws.device}`
+        }));
+        ws.log(`relogin attemp, denied`);
+        return true;
+    }
+    return false;
 }
 
 // init
@@ -184,7 +238,11 @@ server.listen(port, () => { console.log(`server is up on port ${port}!`); })
         "msg":"identity",
         "device":"smartHome"
     }
-
+    
+    {
+        "msg": "connectClient"
+    }
+     
 
     {
         "type":"stream",
