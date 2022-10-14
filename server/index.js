@@ -22,11 +22,13 @@ const device = {
     smartHome: {
         ws: undefined,
         run: () => {
+            updateWs();
             // allow stream for sending sensors data
             const { smartHome } = device;
             const { ws, data } = smartHome;
             ws.allowStream = true;
             ws.on('message', (msg) => {
+                updateWs();
                 let res = objify(msg);
                 if (res === false) { ws.send(deserializeError); return; };
                 // if stream
@@ -47,27 +49,36 @@ const device = {
         },
         data: {
             suhu: undefined,
+            humidity: undefined,
             gas: undefined,
         },
     },
 };
+// update device
+function updateWs() {
+    usersModule.update();
+    for (const [key, value] of Object.entries(device)) {
+        if (value.ws != undefined && (value.ws.readyState != WebSocket.OPEN && value.ws.readyState != WebSocket.CONNECTING)) {
+            delete device[key].ws;
+            device[key].ws = undefined;
+        }
+    }
+}
 
 const usersModule = {
     user: class {
         constructor(ws) {
+            // const ws = WebSocket;
+
             this.ws = ws;
             this.id = ws.device;
-        }
-        run() {
-            const { user } = device;
-            const { ws, data } = user;
 
             // modes code(switch)
             const mode = {
                 currentMode: "init",
                 script: {
                     sensorStream: () => {
-                        console.log("entering stream");
+                        ws.log("entering stream");
                     }
                 },
             };
@@ -79,7 +90,13 @@ const usersModule = {
             })
         }
     },
-    users: [],
+    users: {},
+    update: () => {
+        for (const [key, value] of Object.entries(usersModule.users))
+            if (value.ws.readyState != WebSocket.OPEN && value.ws.readyState != WebSocket.CONNECTING)
+                delete usersModule.users[key];
+
+    },
 }
 
 // depricated:
@@ -102,6 +119,7 @@ const usersModule = {
 
 // for identify
 wss.on('connection', (ws) => {
+    updateWs();
     console.log(`connection attemp been made`);
     ws.send(stringify({ msg: "identity requested" }));
 
@@ -115,6 +133,9 @@ wss.on('connection', (ws) => {
     const { log } = ws;
     // code for starting connection and handle web client
     ws.on('message', (msg) => {
+        // update stuffs
+        updateWs();
+
         // turn it into json
         let res = objify(msg);
 
@@ -133,11 +154,14 @@ wss.on('connection', (ws) => {
         if (res.msg === "connectClient") {
             if (alreadyConnected(ws)) return;
             ws.device = `client:${getUniqueID()}`
-            usersModule.users.push(new usersModule.user(ws));
+            usersModule.users[ws.device] = new usersModule.user(ws);
+            ws.allowed = true;
+
             ws.send(stringify({
-                msg:"connected"
+                msg: "connected",
+                details: `connected sucsesfully as ${ws.device}`
             }))
-            console.log(usersModule.users);
+            log('connected sucsesfully');
             return;
         }
 
@@ -188,11 +212,9 @@ wss.on('connection', (ws) => {
             return;
         }
 
-    })
+    });
+    ws.on('close', () => { updateWs(); ws.log('disconnected') });
 })
-
-
-
 
 
 // common function
@@ -242,8 +264,12 @@ server.listen(port, () => { console.log(`server is up on port ${port}!`); })
     {
         "msg": "connectClient"
     }
-     
 
+    {
+        "msg":"change mode",
+        "mode": "sensorStream"
+    }
+    
     {
         "type":"stream",
         "stream":"sensors",

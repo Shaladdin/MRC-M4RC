@@ -11,18 +11,15 @@
 <body>
     <textarea name="input" id="wsIn" cols="30" rows="10">
 {
-    "msg":"identity",
-    "device":"smartHome"
+    "msg": "connectClient"
 }
     </textarea>
     <button>send</button>
 </body>
 <script src="./js/ws.js"></script>
 <script>
-    const isSecure = window.location.protocol == 'https:';
-    const server = window.location.host;
     const input = document.getElementById('wsIn');
-    init().then(async(socket) => {
+    init().then(async (socket) => {
         document.getElementsByTagName('button')[0].addEventListener('click', async (event) => {
             if (socket.readyState === socket.CLOSED || socket.readyState === socket.CLOSING) {
                 console.log('recconecting');

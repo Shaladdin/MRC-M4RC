@@ -78,33 +78,39 @@ void setup()
         Serial.println(F("Attemp to connect to Websockets server"));
     }
     Serial.println(F("connected to websockets"));
+    
     // run callback when messages are received
     ws.onMessage([&](WebsocketsMessage message)
                  {
-                    String msg = String(message.data());
+                     String msg = String(message.data());
                      Serial.println(F("Got Message: ") + msg);
-                     char* bait, msgType, details; // leave the bait here, no one knows why, but yet it work
+                     String msgType, details, error; // leave the bait here, no one knows why, but yet it work
                      {
                         DynamicJsonDocument doc(ESP.getMaxFreeBlockSize() - 512);
-                        DeserializationError err =  deserializeJson(doc, msg);
-                        if(err){
+                        DeserializationError err = deserializeJson(doc, msg);
+                        if (err)
+                        {
                             Serial.print(F("deserializeJson() failed with code "));
                             Serial.println(err.f_str());
                             return;
                         }
-                        msgType = doc[F("msg")];
-                        details = doc[F("err")]; 
+                        msgType = doc[F("msg")].as<String>();
+                        details = doc[F("details")].as<String>();
+                        error = doc[F("err")].as<String>();
                      }
-                     if(String(msgType) == F("connected"))
-                     activated = true; });
-
-    // self identify to server
-    String identifyMsg;
-    StaticJsonDocument<64> identifyDoc;
-    identifyDoc[F("msg")] = F("identity");
-    identifyDoc[F("device")] = F("smartHome");
-    serializeJson(identifyDoc, identifyMsg);
-    sendWs(identifyMsg);
+                     if (msgType == F("identity requested"))
+                     {
+                        // self identify to server
+                        String identifyMsg;
+                        StaticJsonDocument<64> identifyDoc;
+                        identifyDoc[F("msg")] = F("identity");
+                        identifyDoc[F("device")] = F("smartHome");
+                        serializeJson(identifyDoc, identifyMsg);
+                        sendWs(identifyMsg);
+                        return;
+                     }
+                     if (msgType == F("connected"))
+                         activated = true; });
 }
 
 void loop()
