@@ -95,7 +95,6 @@ const usersModule = {
         for (const [key, value] of Object.entries(usersModule.users))
             if (value.ws.readyState != WebSocket.OPEN && value.ws.readyState != WebSocket.CONNECTING)
                 delete usersModule.users[key];
-
     },
 }
 
@@ -180,12 +179,12 @@ wss.on('connection', (ws) => {
             }
             // check if other device already connected as ws.device
             if (device[res.device].ws !== undefined && res.device != 'user') {
+                const { ws } = device[res.device];
                 ws.send(stringify({
-                    msg: "error",
-                    err: `a device already connected as ${res.device}`
-                }))
-                log(`denied, another device already connected as ${res.device}`);
-                return;
+                    msg:"error",
+                    err:"smart home connected as other device"
+                }));
+                ws.terminate();
             }
             // allow and connected
             ws.device = res.device;
