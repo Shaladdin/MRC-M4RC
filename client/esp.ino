@@ -78,7 +78,7 @@ void setup()
         Serial.println(F("Attemp to connect to Websockets server"));
     }
     Serial.println(F("connected to websockets"));
-    
+
     // run callback when messages are received
     ws.onMessage([&](WebsocketsMessage message)
                  {
@@ -147,6 +147,7 @@ void loop()
 
     JsonObject data = doc.createNestedObject(F("data"));
     data[F("suhu")] = temp;
+    data[F("humidity")] = humidity;
     JsonObject data_gas = data.createNestedObject(F("gas"));
     data_gas[F("co")] = co;
     data_gas[F("lpg")] = lpg;

@@ -34,9 +34,7 @@ const device = {
                 // if stream
                 if (res.type === 'stream') {
                     if (res.stream === 'sensors') {
-                        const { suhu, gas } = res.data;
-                        data.suhu = suhu;
-                        data.gas = gas;
+                        data = res.data;
                         console.log(data);
                         return;
                     }
@@ -50,7 +48,11 @@ const device = {
         data: {
             suhu: undefined,
             humidity: undefined,
-            gas: undefined,
+            gas: {
+                co: undefined,
+                lpg: undefined,
+                smoke: undefined
+            },
         },
     },
 };
@@ -181,8 +183,8 @@ wss.on('connection', (ws) => {
             if (device[res.device].ws !== undefined && res.device != 'user') {
                 const { ws } = device[res.device];
                 ws.send(stringify({
-                    msg:"error",
-                    err:"smart home connected as other device"
+                    msg: "error",
+                    err: "smart home connected as other device"
                 }));
                 ws.terminate();
             }
