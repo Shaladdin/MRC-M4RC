@@ -34,7 +34,8 @@ const device = {
                 // if stream
                 if (res.type === 'stream') {
                     if (res.stream === 'sensors') {
-                        data = res.data;
+                        const { suhu, humidity, gas } = res.data;
+                        data.suhu = suhu; data.humidity = humidity; data.gas = gas;
                         console.log(data);
                         return;
                     }
@@ -272,14 +273,14 @@ server.listen(port, () => { console.log(`server is up on port ${port}!`); })
     }
     
     {
-        "type":"stream",
-        "stream":"sensors",
+        "type": "stream",
+        "stream": "sensors",
         "data": {
-            "suhu": "20",
+            "suhu": 27.79999924,
+            "humidity": 37,
             "gas": {
-                "co": "69",
-                "lpg": "420",
-                "smoke": "0"
+                "co": 0.004595334,
+                "lpg": 0.008170504
             }
         }
     }

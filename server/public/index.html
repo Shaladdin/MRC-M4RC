@@ -17,17 +17,18 @@
     <button>send</button>
 </body>
 <script src="./js/ws.js"></script>
+<script src="./js/common.js"></script>
 <script>
     const input = document.getElementById('wsIn');
-    init().then(async (socket) => {
-        document.getElementsByTagName('button')[0].addEventListener('click', async (event) => {
-            if (socket.readyState === socket.CLOSED || socket.readyState === socket.CLOSING) {
-                console.log('recconecting');
-                socket = await init();
-            }
-            socket.send(input.value)
-        })
-    });
+    const button = () => document.getElementsByTagName('button')[0];
+    init((socket) => {
+        function run() { socket.send(input.value); }
+        removeAllEvents(button()).addEventListener("click", run);
+    })
+    // init().then(async (socket) =>
+    //     button.addEventListener('click', () =>
+    //         socket.send(input.value))
+    // );
 </script>
 
 </html>
