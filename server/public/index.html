@@ -15,6 +15,52 @@
 }
     </textarea>
     <button>send</button>
+    <br>
+    // request example:
+    /*
+    <br>
+    {
+        "msg":"identity",
+        "device":"roboBin"
+    }
+    <br>
+    {
+        "type": "stream",
+        "stream": "sensors",
+        "data": {
+            "metal": 69,
+            "nonMetal": 42
+        }
+    }
+    <br><br>
+    {
+        "msg": "connectClient"
+    }
+    <br>
+    {
+        "msg":"change mode",
+        "mode": "sensorStream"
+    }
+    <br><br>
+    {
+        "msg":"identity",
+    "device":"smartHome"
+    }
+    <br>
+    {
+        "type": "stream",
+        "stream": "sensors",
+        "data": {
+            "suhu": 27.79999924,
+            "humidity": 37,
+            "gas": {
+                "co": 0.004595334,
+                "lpg": 0.008170504
+            }
+        }
+    }
+    <br><br>
+    */
 </body>
 <script src="./js/ws.js"></script>
 <script src="./js/common.js"></script>
@@ -24,11 +70,7 @@
     init((socket) => {
         function run() { socket.send(input.value); }
         removeAllEvents(button()).addEventListener("click", run);
-    })
-    // init().then(async (socket) =>
-    //     button.addEventListener('click', () =>
-    //         socket.send(input.value))
-    // );
+    });
 </script>
 
 </html>

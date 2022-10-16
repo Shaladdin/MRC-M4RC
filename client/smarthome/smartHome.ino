@@ -29,7 +29,7 @@ WebsocketsClient ws;
 const char *deviceID = "smartHome"; // robotID (to identefied by server)
 
 bool activated = false;
-// bool pending = false;
+bool pending = false;
 
 // outputs pin
 #define lamp D3
@@ -84,7 +84,7 @@ void setup()
                  {
                      String msg = String(message.data());
                      Serial.println(F("Got Message: ") + msg);
-                     String msgType, details, error; // leave the bait here, no one knows why, but yet it work
+                     String msgType, details, error;
                      {
                         DynamicJsonDocument doc(ESP.getMaxFreeBlockSize() - 512);
                         DeserializationError err = deserializeJson(doc, msg);
@@ -115,6 +115,7 @@ void setup()
 
 void loop()
 {
+    // check websocket
     if (ws.available())
         ws.poll();
 

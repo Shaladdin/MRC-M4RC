@@ -3,6 +3,7 @@
 const WebSocket = require('ws');
 const http = require('http');
 const express = require('express');
+const nedb = require('nedb');
 
 require('dotenv').config({ path: __dirname + '\\.env' });
 
@@ -10,6 +11,16 @@ const port = 8080;
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server: server });
+const db = {
+    sensor: new nedb({ filename: `${__dirname}/db/sensors.db`, autoload: true })
+}
+
+
+for (const [key, value] of Object.entries(db)) {
+    value.loadDatabase();
+    value.persistence.setAutocompactionInterval(60);
+}
+
 
 
 const { stringify, parse: jsonify } = JSON;
@@ -22,13 +33,11 @@ const device = {
     smartHome: {
         ws: undefined,
         run: () => {
-            updateWs();
-            // allow stream for sending sensors data
             const { smartHome } = device;
             const { ws, data } = smartHome;
+            // allow stream for sending sensors data
             ws.allowStream = true;
             ws.on('message', (msg) => {
-                updateWs();
                 let res = objify(msg);
                 if (res === false) { ws.send(deserializeError); return; };
                 // if stream
@@ -36,7 +45,7 @@ const device = {
                     if (res.stream === 'sensors') {
                         const { suhu, humidity, gas } = res.data;
                         data.suhu = suhu; data.humidity = humidity; data.gas = gas;
-                        console.log(data);
+                        db.sensor.update({ robot: "smartHome" }, { $set: { data: data } }, { upsert: true });
                         return;
                     }
                     ws.send(stringify({
@@ -55,7 +64,38 @@ const device = {
                 smoke: undefined
             },
         },
+        mode: 'automatic',
     },
+    roboBin: {
+        ws: undefined,
+        run: () => {
+            const { roboBin } = device;
+            const { ws, data } = roboBin;
+            // allow stream for sending sensors data
+            ws.allowStream = true;
+            ws.on('message', (msg) => {
+                let res = objify(msg);
+                if (res === false) { ws.send(deserializeError); return; };
+                if (res.type === 'stream') {
+                    if (res.stream === 'sensors') {
+                        const { metal, nonMetal, } = res.data;
+                        data.metal = metal; data.nonMetal = nonMetal;
+                        db.sensor.update({ robot: "roboBin" }, { $set: { data: data } }, { upsert: true });
+                        console.log(data);
+                        return;
+                    }
+                    ws.send(stringify({
+                        msg: "error",
+                        err: "no stream found"
+                    }));
+                }
+            })
+        },
+        data: {
+            metal: undefined,
+            nonMetal: undefined,
+        }
+    }
 };
 // update device
 function updateWs() {
@@ -253,23 +293,22 @@ function alreadyConnected(ws) {
 // init
 app.use(express.static(`${__dirname}/public`));
 server.listen(port, () => { console.log(`server is up on port ${port}!`); })
-
-
 // request example:
 /*
 
     {
-        "msg":"identity",
-        "device":"smartHome"
+        "msg": "connectClient"
     }
     
     {
-        "msg": "connectClient"
-    }
-
-    {
         "msg":"change mode",
         "mode": "sensorStream"
+    }
+
+
+    {
+        "msg":"identity",
+        "device":"smartHome"
     }
     
     {
@@ -284,4 +323,20 @@ server.listen(port, () => { console.log(`server is up on port ${port}!`); })
             }
         }
     }
+    
+
+    {
+        "msg":"identity",
+        "device":"roboBin"
+    }
+
+    {
+        "type": "stream",
+        "stream": "sensors",
+        "data": {
+            "metal": 69,
+            "nonMetal": 42
+        }
+    }
+
 */
