@@ -9,21 +9,68 @@
 </head>
 
 <body>
-    <button>hoh badag</button>
+    <textarea name="input" id="wsIn" cols="30" rows="10">
+{
+    "msg": "connectClient"
+}
+    </textarea>
+    <button>send</button>
+    <br>
+    // request example:
+    /*
+    <br>
+    {
+        "msg":"identity",
+        "device":"roboBin"
+    }
+    <br>
+    {
+        "type": "stream",
+        "stream": "sensors",
+        "data": {
+            "metal": 20,
+            "nonMetal": 4
+        }
+    }
+    <br><br>
+    {
+        "msg": "connectClient"
+    }
+    <br>
+    {
+        "msg":"change mode",
+        "mode": "sensorStream"
+    }
+    <br><br>
+    {
+        "msg":"identity",
+    "device":"smartHome"
+    }
+    <br>
+    {
+        "type": "stream",
+        "stream": "sensors",
+        "data": {
+            "suhu": 27.79999924,
+            "humidity": 37,
+            "gas": {
+                "co": 0.004595334,
+                "lpg": 0.008170504
+            }
+        }
+    }
+    <br><br>
+    */
 </body>
+<script src="./js/ws.js"></script>
+<script src="./js/common.js"></script>
 <script>
-    const isSecure = window.location.protocol == 'https:';
-    const server = window.location.host;
-
-    const socket = new WebSocket(`ws${isSecure ? 's' : ''}://${server}`);
-
-    socket.addEventListener('open', (event) => {
-        console.log('connected to webSocket')
-    })
-    socket.addEventListener('message', (event) => {
-        console.log(`incoming:\n ${event.data}`);
-    })
-    document.getElementsByTagName('button')[0].addEventListener('click', (event) => { socket.send('hello world') });
+    const input = document.getElementById('wsIn');
+    const button = () => document.getElementsByTagName('button')[0];
+    init((socket) => {
+        function run() { socket.send(input.value); }
+        removeAllEvents(button()).addEventListener("click", run);
+    });
 </script>
 
 </html>
