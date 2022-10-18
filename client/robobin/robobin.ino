@@ -78,7 +78,7 @@ void setup()
         pinMode(inputs[i], INPUT);
 
     digitalWrite(LEDm, HIGH);
-    digitalWrite(LEDm, HIGH);
+    digitalWrite(LEDn, HIGH);
 
     // connect to wifi
     WiFi.begin(ssid, password);
@@ -126,7 +126,7 @@ void setup()
                             String identifyMsg;
                             StaticJsonDocument<64> identifyDoc;
                             identifyDoc[F("msg")] = F("identity");
-                            identifyDoc[F("device")] = F("smartHome");
+                            identifyDoc[F("device")] = F("roboBin");
                             serializeJson(identifyDoc, identifyMsg);
                             sendWs(identifyMsg);
                             return;
@@ -134,7 +134,7 @@ void setup()
                         if (msgType == F("connected"))
                             activated = true; });
     digitalWrite(LEDm, LOW);
-    digitalWrite(LEDm, LOW);
+    digitalWrite(LEDn, LOW);
 }
 
 void loop()

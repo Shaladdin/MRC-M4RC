@@ -2,9 +2,13 @@
 
 :root {
     --black: #0E1525;
-    --darkGreen: #346E8B;
     --backGreen: #1C2333;
-    --green: #5AB8AD;
+    --lighterBack: #2B3245;
+    --darkGreen: #346E8B;
+    --lightGreen: #5bb9ae;
+    --green: #458F95;
+    --yellow: #F1B91D;
+    --white: #D7DBDD;
 }
 
 body {
@@ -22,25 +26,47 @@ header {
     align-items: center;
     max-width: 500px;
     width: 90%;
-
     flex-direction: column;
 }
 
 .light {
     background-color: var(--backGreen);
     border-radius: 10px;
+    padding: 8px;
+}
+
+.value, .content {
+    background-color: var(--lighterBack);
+    padding: 5px;
+    border-radius: 10px;
+    min-height: 80px;
 }
 
 h1 {
-    color: var(--green);
+    color: var(--lightGreen);
     margin: 10px;
     font-size: 50px;
+    text-align: center;
 }
 
 h2 {
     color: var(--darkGreen);
+    margin: 5px;
 }
 
 h3 {
-    margin-top: 0;
+    margin: 5px;
+    color: var(--white);
+}
+
+h4 {
+    margin: 5px;
+    color: var(--green);
+    /* font-size: */
+}
+
+h5 {
+    color: var(--white);
+    margin: 0px;
+    font-size: 40px;
 }

@@ -81,7 +81,6 @@ const device = {
                         const { metal, nonMetal, } = res.data;
                         data.metal = metal; data.nonMetal = nonMetal;
                         db.sensor.update({ robot: "roboBin" }, { $set: { data: data } }, { upsert: true });
-                        console.log(data);
                         return;
                     }
                     ws.send(stringify({
@@ -94,6 +93,25 @@ const device = {
         data: {
             metal: undefined,
             nonMetal: undefined,
+        },
+        setting: {
+            metal: {
+                empty: 26.0,
+                full: 4.5
+            },
+            nonMetal: {
+                empty: 24.0,
+                full: 4.5
+            }
+        },
+        getData: () => {
+            const { setting, data } = device.roboBin;
+            const out = { metal: undefined, nonMetal: undefined };
+            for (const [key, value] of Object.entries(setting)) {
+                console.log(setting);
+                out[key] = map(data[key], value.empty, value.full, 0, 100);
+            }
+            return out;
         }
     }
 };
@@ -289,6 +307,13 @@ function alreadyConnected(ws) {
     }
     return false;
 }
+
+// map data
+function map(x, inMin, inMax, outMin, outMax) {
+    console.log(x, inMin, inMax, outMin, outMax);
+    return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+}
+
 
 // init
 app.use(express.static(`${__dirname}/public`));

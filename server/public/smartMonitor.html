@@ -6,33 +6,159 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Monitor</title>
-
 </head>
+<link rel="icon" type="image/png" href="img/icon.png" />
+<style>
+    .sensors {
+        display: flex;
+        justify-content: center;
+        gap: 10px 10px;
+        flex-wrap: wrap;
+    }
+
+    .content {
+        display: flex;
+    }
+
+    .value h4 {
+        color: var(--yellow);
+    }
+
+    .api {
+        display: flex[];
+    }
+
+    .api .value {
+        background-color: var(--lightGreen);
+        height: 50%;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .robobin {
+        margin: 20px auto;
+        display: flex;
+        max-width: 500px;
+        width: 90%;
+    }
+
+    .robobin .title {
+        max-width: 120px;
+    }
+
+    .bar {
+        background-color: var(--darkGreen);
+        border-radius: 5px;
+    }
+
+    .barFill {
+        background-color: var(--lightGreen);
+        border-radius: 5px;
+        width: 0%;
+        min-width: 15%;
+    }
+
+    .barFill h4 {
+        color: black;
+    }
+
+    .robobin .value {
+        padding: 5px 20px;
+    }
+</style>
 
 <body>
     <header class="light">
         <h1>Smart Monitor</h1>
         <h3>MTsN 4 Jakarta</h3>
     </header>
+
     <div class="sensors">
-        <div class="light">
+        <div class="light dht">
             <h2>dht</h2>
-            <div></div>
+            <div class="content">
+                <div class="text">
+                    <h4>kelembapan:</h4>
+                    <h4>suhu ruang:</h4>
+                </div>
+                <div class="value">
+                    <h4>100%</h4>
+                    <h4>100</h4>
+                </div>
+            </div>
         </div>
-        <div class="light">
+        <div class="light mq2">
             <h2>mq2</h2>
-            <div></div>
+            <div class="content">
+                <div class="text">
+                    <h4>gas co:</h4>
+                    <h4>gas lpg:</h4>
+                    <h4>asap:</h4>
+                </div>
+                <div class="value">
+                    <h4>100</h4>
+                    <h4>100</h4>
+                    <h4>100</h4>
+                </div>
+            </div>
         </div>
-        <div class="light">
+        <div class="light api">
             <h2>Sensor Api</h2>
-            <div></div>
+            <div class="value">
+                <h5>Aman</h5>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <div class="robobin light">
+        <div class="title">
+            <h2>Robobin</h2>
+            <h4>kepenuhan sampah:</h4>
+        </div>
+        <div class="value">
+            <div id="metal">
+                <h2>sampah Metal:</h2>
+                <div class="bar">
+                    <div class="barFill">
+                        <h4>0%</h4>
+                    </div>
+                </div>
+            </div>
+            <div id="nonMetal">
+                <h2>sampah nonMetal:</h2>
+                <div class="bar">
+                    <div class="barFill">
+                        <h4>0%</h4>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
 <link rel="stylesheet" href="./style/common.css">
 <script src="./js/ws.js"></script>
+<script src=""></script>
 <script>
+    const metal = {
+        bar: document.getElementById("metal").lastElementChild,
+        text: HTMLElement
+    };
+    metal.text = metal.bar.lastElementChild.lastElementChild;
+    const nonMetal = {
+        bar: document.getElementById("nonMetal").lastElementChild,
+        text: HTMLElement
+    }
+    nonMetal.text = nonMetal.bar.lastElementChild.lastElementChild;
 
+    const robobin = {
+        metal, nonMetal
+    };
+    init(socket => {
+        socket.send('hello')
+    });
 </script>
 
 </html>
