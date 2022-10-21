@@ -9,13 +9,18 @@
     --green: #458F95;
     --yellow: #F1B91D;
     --white: #D7DBDD;
+    --red: #b95b5b;
+}
+
+* {
+    transition: all 0.2s ease-in;
+    font-family: 'Source Code Pro', monospace;
 }
 
 body {
     width: 100%;
     height: 100%;
     background-color: var(--black);
-    font-family: 'Source Code Pro', monospace;
     margin: 0;
 }
 
@@ -35,11 +40,11 @@ header {
     padding: 8px;
 }
 
+
 .value, .content {
     background-color: var(--lighterBack);
     padding: 5px;
     border-radius: 10px;
-    min-height: 80px;
 }
 
 h1 {
@@ -69,4 +74,29 @@ h5 {
     color: var(--white);
     margin: 0px;
     font-size: 40px;
+}
+
+.back {
+    margin: 0 auto;
+}
+
+a {
+    text-decoration: none;
+}
+
+.holder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.holder a {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.holder a img {
+    width: 20px;
 }

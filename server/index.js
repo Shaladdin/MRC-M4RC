@@ -29,23 +29,43 @@ const deserializeError = stringify({
     err: "input is not valid json, json only"
 })
 
+const getAllData = async () => {
+    const output = {};
+    for (const [key, value] of Object.entries(device)) {
+        output[key] = await value.getData();
+    }
+    return output;
+}
+const updateStream = async () => {
+    const { users } = usersModule;
+    const data = await getAllData();
+    for (const [key, value] of Object.entries(users))
+        if (value.mode.currentMode === 'sensorStream')
+            value.ws.send(stringify(data));
+}
+const updateDevice = async (device, data) => {
+    db.sensor.update({ robot: device }, { $set: { data: data } }, { upsert: true });
+}
+
 const device = {
     smartHome: {
         ws: undefined,
-        run: () => {
+        run: async () => {
             const { smartHome } = device;
             const { ws, data } = smartHome;
             // allow stream for sending sensors data
             ws.allowStream = true;
+
             ws.on('message', (msg) => {
                 let res = objify(msg);
                 if (res === false) { ws.send(deserializeError); return; };
                 // if stream
                 if (res.type === 'stream') {
+                    const { suhu, humidity, gas, api, orang } = res.data;
                     if (res.stream === 'sensors') {
-                        const { suhu, humidity, gas } = res.data;
-                        data.suhu = suhu; data.humidity = humidity; data.gas = gas;
-                        db.sensor.update({ robot: "smartHome" }, { $set: { data: data } }, { upsert: true });
+                        data.suhu = suhu; data.api = api; data.humidity = humidity; data.gas = gas; data.orang = orang;
+                        updateDevice("smartHome", data);
+                        updateStream();
                         return;
                     }
                     ws.send(stringify({
@@ -58,6 +78,9 @@ const device = {
         data: {
             suhu: undefined,
             humidity: undefined,
+            api: false,
+            orang: undefined,
+            security: false,
             gas: {
                 co: undefined,
                 lpg: undefined,
@@ -65,10 +88,21 @@ const device = {
             },
         },
         mode: 'automatic',
+        getData: async () => {
+            const { smartHome } = device;
+            const { ws, data } = smartHome;
+            if (ws !== undefined && ws.allowStream === true) return device.smartHome.data
+            // set up for empty data
+            var dbRead = await db.read(db.sensor, { robot: "smartHome" })
+            var { data: dbData } = dbRead;
+            data.suhu = dbData.suhu; data.humidity = dbData.humidity; data.api = dbData.api; data.gas = dbData.gas; data.orang = dbData.orang;
+
+            return device.smartHome.data
+        },
     },
     roboBin: {
         ws: undefined,
-        run: () => {
+        run: async () => {
             const { roboBin } = device;
             const { ws, data } = roboBin;
             // allow stream for sending sensors data
@@ -81,6 +115,7 @@ const device = {
                         const { metal, nonMetal, } = res.data;
                         data.metal = metal; data.nonMetal = nonMetal;
                         db.sensor.update({ robot: "roboBin" }, { $set: { data: data } }, { upsert: true });
+                        updateStream();
                         return;
                     }
                     ws.send(stringify({
@@ -104,11 +139,16 @@ const device = {
                 full: 4.5
             }
         },
-        getData: () => {
+        getData: async () => {
             const { setting, data } = device.roboBin;
             const out = { metal: undefined, nonMetal: undefined };
+
+            // set up for empty data
+            var dbRead = await db.read(db.sensor, { robot: "roboBin" })
+            var { data: dbData } = dbRead;
+            data.metal = dbData.metal; data.nonMetal = dbData.nonMetal;
+
             for (const [key, value] of Object.entries(setting)) {
-                console.log(setting);
                 out[key] = map(data[key], value.empty, value.full, 0, 100);
             }
             return out;
@@ -140,14 +180,35 @@ const usersModule = {
                 script: {
                     sensorStream: () => {
                         ws.log("entering stream");
+                        ws.send(stringify({
+                            msg: "change mode response",
+                            mode: "sensorStream"
+                        }))
                     }
                 },
             };
+            this.mode = mode;
             //Switch the mode 
             ws.on('message', (msg) => {
                 let res = objify(msg);
-                if (res.msg === "change mode")
+                ws.log('incoming: '+msg);
+                if (res.msg === "change mode") {
+                    mode.currentMode = res.mode;
                     mode.script[res.mode]();
+                    return;
+                }
+                if (res.msg === "device data req")
+                    updateStream();
+                else if (res.msg === 'security mode') {
+                    const { smartHome } = device;
+                    smartHome.data.security = res.mode;
+                    updateDevice("smartHome", smartHome.data);
+                    if (smartHome.ws === undefined) return;
+                    smartHome.ws.send(stringify({
+                        msg: 'security mode',
+                        mode: res.mode
+                    }))
+                }
             })
         }
     },
@@ -309,10 +370,15 @@ function alreadyConnected(ws) {
 }
 
 // map data
-function map(x, inMin, inMax, outMin, outMax) {
-    console.log(x, inMin, inMax, outMin, outMax);
-    return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-}
+const map = (x, inMin, inMax, outMin, outMax) => (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+
+// read database
+db.read = (database, query, multiple = false) => new Promise((res, rej) => {
+    database.find(query, (err, doc) => {
+        if (err) { rej(err); return };
+        res(multiple ? doc : doc[0]);
+    })
+})
 
 
 // init
@@ -330,6 +396,12 @@ server.listen(port, () => { console.log(`server is up on port ${port}!`); })
         "mode": "sensorStream"
     }
 
+    {
+        "msg":"security mode",
+        "mode":true
+    }
+
+
 
     {
         "msg":"identity",
@@ -342,13 +414,17 @@ server.listen(port, () => { console.log(`server is up on port ${port}!`); })
         "data": {
             "suhu": 27.79999924,
             "humidity": 37,
+            "api":false,
+            "orang":1,
             "gas": {
                 "co": 0.004595334,
-                "lpg": 0.008170504
+                "lpg": 0.008170504,
+                "smoke": 0.009170504
             }
         }
     }
     
+
 
     {
         "msg":"identity",
