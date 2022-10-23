@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "typeinfo": "cpp",
+        "bit": "cpp",
+        "*.tcc": "cpp",
+        "exception": "cpp",
+        "iterator": "cpp",
+        "istream": "cpp",
+        "ranges": "cpp",
+        "streambuf": "cpp",
+        "cmath": "cpp",
+        "type_traits": "cpp"
+    }
+}

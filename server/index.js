@@ -135,7 +135,7 @@ const device = {
                 full: 4.5
             },
             nonMetal: {
-                empty: 24.0,
+                empty: 26.0,
                 full: 4.5
             }
         },
@@ -191,7 +191,7 @@ const usersModule = {
             //Switch the mode 
             ws.on('message', (msg) => {
                 let res = objify(msg);
-                ws.log('incoming: '+msg);
+                ws.log('incoming: ' + msg);
                 if (res.msg === "change mode") {
                     mode.currentMode = res.mode;
                     mode.script[res.mode]();
@@ -199,14 +199,17 @@ const usersModule = {
                 }
                 if (res.msg === "device data req")
                     updateStream();
+
                 else if (res.msg === 'security mode') {
                     const { smartHome } = device;
                     smartHome.data.security = res.mode;
+
                     updateDevice("smartHome", smartHome.data);
+
                     if (smartHome.ws === undefined) return;
                     smartHome.ws.send(stringify({
                         msg: 'security mode',
-                        mode: res.mode
+                        detail: res.mode ? "0" : "1"
                     }))
                 }
             })

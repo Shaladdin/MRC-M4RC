@@ -4,9 +4,9 @@
 using namespace websockets;
 
 // IOT var
-const char *ssid = "Adzka";                       // Enter SSID
-const char *password = "123456789";               // Enter Password
-const char *host = "mrc-m4rc.shaladddin.repl.co"; // Enter server adress
+const char *ssid = "Adzka";                             // Enter SSID
+const char *password = "123456789";                     // Enter Password
+const char *host = "si-santui-m4rc.shaladddin.repl.co"; // Enter server adress
 const char *wsProtocol = "wss://";
 const uint16_t port = 8080; // Enter server port
 WebsocketsClient ws;
@@ -61,7 +61,7 @@ const int inputs[] = {metalEch, nonMetalEch};
 
 // setting
 #define readingLength 100
-#define penuh 10.0
+#define penuh 4.5
 #define metalEmpty 22.0
 #define nonMetalEmpty 23.5
 
@@ -154,20 +154,22 @@ void loop()
     {
         float met = sampahMetal.getDistance();
         float nonmet = sampahLain.getDistance();
-        Serial.println();
-        Serial.println(met);
-        Serial.println(nonmet);
+        // Serial.println();
+        // Serial.println(met);
+        // Serial.println(nonmet);
         metalDistances += met;
         nonMetalDistances += nonmet;
     }
-    Serial.println("total: ");
-    Serial.println(metalDistances);
-    Serial.println(nonMetalDistances);
+    // Serial.println("total: ");
+    // Serial.println(metalDistances);
+    // Serial.println(nonMetalDistances);
     metalDistances /= readingLength;
     nonMetalDistances /= readingLength;
-    Serial.println("average:");
-    Serial.println(metalDistances);
-    Serial.println(nonMetalDistances);
+    // Serial.println("average:");
+    // Serial.println(metalDistances);
+    // Serial.println(nonMetalDistances);
+    digitalWrite(LEDm, metalDistances < penuh);
+    digitalWrite(LEDn, nonMetalDistances < penuh);
 
     // Stream it to server
     String streamStr;
