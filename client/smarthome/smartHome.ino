@@ -34,7 +34,7 @@ bool pending = false;
 #define buzzer D0
 #define lamp D3
 #define fan D4
-const int outputs[] = {lamp, fan};
+const int outputs[] = {lamp, fan, buzzer};
 
 // inputs pin
 #define apiPin D1
@@ -132,6 +132,7 @@ void setup()
                     }
                     if(msgType == F("security mode")){
                         securityMode = details == F("1");
+                        Serial.println(securityMode);
                     }
                     if (msgType == F("connected"))
                         activated = true; });
@@ -185,8 +186,21 @@ void loop()
         sendWs(streamStr);
     }
 
-    /*security*/{
-        
+    /*security*/ {
+        bool in = !digitalRead(irDalam) && !digitalRead(irLuar);
+        Serial.println("logic: " + in ? "true" : "false");
+        if (in && securityMode)
+        {
+            tone(buzzer, 1000);
+            String notifyStr;
+            StaticJsonDocument<64> doc;
+            doc[F("type")] = F("notify");
+            doc[F("notify")] = F("security");
+            serializeJson(doc, notifyStr);
+            sendWs(notifyStr);
+        }
+        if (!securityMode)
+            noTone(buzzer);
     }
 
     /*mode otomatis*/ {
@@ -194,37 +208,7 @@ void loop()
     }
 
     /*room detection*/ {
-        bool irDalamOn = !digitalRead(irDalam);
-        bool irLuarOn = !digitalRead(irLuar);
-
-        if (irDalamOn && !irLuarOn)
-            prevOut = true;
-
-        if (!irDalamOn && irLuarOn)
-            preIn = true;
-
-        if (!irDalamOn && !irLuarOn)
-        {
-            prevOut = false;
-            preIn = false;
-        }
-
-        if (prevOut && netral)
-        {
-            if (JumlahOrang > 0)
-                JumlahOrang--;
-            prevOut = false;
-            delay(500);
-        }
-
-        if (preIn && netral)
-        {
-            if (JumlahOrang < 10)
-                JumlahOrang++;
-            preIn = false;
-            delay(500);
-        }
-        Serial.println(F("Jumlah Orang: ") + String(JumlahOrang));
+        
     }
 }
 

@@ -73,6 +73,14 @@ const device = {
                         err: "no stream found"
                     }));
                 }
+                else if (res.type === 'notify') {
+                    if (res.notify === 'security') {
+                        const { users } = usersModule;
+                        for (const [key, value] of Object.entries(users))
+                            value.ws.send(stringify({msg:'security alert'}));
+                        return
+                    }
+                }
             })
         },
         data: {
@@ -209,7 +217,7 @@ const usersModule = {
                     if (smartHome.ws === undefined) return;
                     smartHome.ws.send(stringify({
                         msg: 'security mode',
-                        detail: res.mode ? "0" : "1"
+                        details: res.mode ? "0" : "1"
                     }))
                 }
             })
@@ -427,6 +435,11 @@ server.listen(port, () => { console.log(`server is up on port ${port}!`); })
         }
     }
     
+    {
+        "type":"notify",
+        "notify":"security"
+    }
+
 
 
     {
