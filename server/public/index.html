@@ -122,7 +122,7 @@
         border: none;
     }
 
-    .button:hover {
+    .smartRoom .content .monitor .button:hover {
         width: 95%;
         height: 95%;
         font-size: 25px;
@@ -166,7 +166,7 @@
     <div class="notify">
         <h1>Security Alert!</h1>
         <button class="">
-            <h4>hello</h4>
+            <h4>ok</h4>
         </button>
     </div>
 
@@ -328,7 +328,7 @@
                 return;
             };
             if (!connected) return;
-            if(res.msg === 'security alert'){
+            if (res.msg === 'security alert') {
                 notify.style.display = 'flex';
             }
             if (res.msg === 'change mode response') {
