@@ -265,6 +265,7 @@
     init(socket => {
         var connected, mode = false;
 
+        console.log(socket)
         // security button
         doc.roomDetection.button.addEventListener('click', () => {
             securityMode = !securityMode;
