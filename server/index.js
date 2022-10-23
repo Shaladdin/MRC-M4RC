@@ -217,7 +217,7 @@ const usersModule = {
                     if (smartHome.ws === undefined) return;
                     smartHome.ws.send(stringify({
                         msg: 'security mode',
-                        details: res.mode ? "0" : "1"
+                        details: res.mode ? "1" : "0"
                     }))
                 }
             })
