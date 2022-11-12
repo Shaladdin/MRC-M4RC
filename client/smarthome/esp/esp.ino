@@ -15,7 +15,9 @@
 #include <DHT.h>
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
+#include <SoftwareSerial.h>
 #include <ArduinoWebsockets.h>
+
 using namespace websockets;
 
 // IOT var
@@ -53,6 +55,11 @@ DHT sensorSuhu(dhtPin, DHT11);
 float lpg, co, smoke,
     temp, humidity, hIndex;
 
+// Hardware serial
+#define Rx D4
+#define Tx D3
+SoftwareSerial nano(Rx, Tx);
+
 // room detection
 bool prevOut, preIn, netral = false;
 int JumlahOrang = 0;
@@ -63,6 +70,7 @@ bool securityMode = false;
 void setup()
 {
     Serial.begin(115200);
+    nano.begin(4800);
     delay(1000);
 
     // initialize outputs pins
@@ -208,7 +216,6 @@ void loop()
     }
 
     /*room detection*/ {
-        
     }
 }
 
@@ -218,3 +225,5 @@ void sendWs(String &in)
     Serial.println(F("Sending: ") + in);
     ws.send(in);
 }
+
+// 
