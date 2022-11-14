@@ -1,8 +1,4 @@
-const int outputs[] = {};
-
-// Input pins
-#define apiPin D1 // not final, will be changed to analog
-const int inputs[] = {apiPin};
+#include "header.h"
 
 void pinInit()
 {
