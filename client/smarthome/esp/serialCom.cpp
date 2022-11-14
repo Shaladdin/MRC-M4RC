@@ -59,6 +59,9 @@ void sendError(String msg, int size, bool toSerial = false)
 // initialize serial
 void SerialInit()
 {
+    Serial.begin(115200);
+    Serial.println(F("hello from esp"));
+    delay(1000);
     do
     {
         Serial.println(F("connecting to nano..."));
