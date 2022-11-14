@@ -1,0 +1,6 @@
+{
+    "port": "COM11",
+    "board": "esp8266:esp8266:nodemcuv2",
+    "output": "./Build",
+    "sketch": "esp.ino"
+}
