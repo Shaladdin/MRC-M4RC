@@ -103,9 +103,15 @@ void SerialRun()
             }
             if (doc[F("type")] == F("ping"))
             {
-                Send(basicRes(F("pong")), 48, fromSerial);
-                Serial.println(F("serial com activated"));
+                Send(basicRes("pong"), 48, fromSerial);
                 serialAvilable = true;
+                Serial.println(F("serial com activated from ping"));
+                return;
+            }
+            if (doc[F("type")] == F("pong"))
+            {
+                serialAvilable = true;
+                Serial.println(F("serial com activated from pong"));
                 return;
             }
             if (doc[F("type")] == F("disconnect!"))
