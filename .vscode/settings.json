@@ -9,6 +9,11 @@
         "ranges": "cpp",
         "streambuf": "cpp",
         "cmath": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "system_error": "cpp"
+    },
+    "editor.tokenColorCustomizations": {
+        "comments": "",
+        "textMateRules": []
     }
 }
