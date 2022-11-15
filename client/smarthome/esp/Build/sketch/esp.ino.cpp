@@ -4,11 +4,12 @@
 
 #line 3 "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\esp\\esp.ino"
 void setup();
-#line 8 "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\esp\\esp.ino"
+#line 9 "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\esp\\esp.ino"
 void loop();
 #line 3 "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\esp\\esp.ino"
 void setup()
 {
+    Serial.begin(115200);
     pinInit();
 }
 

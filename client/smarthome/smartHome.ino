@@ -55,7 +55,7 @@ float lpg, co, smoke,
 
 // room detection
 bool prevOut, preIn, netral = false;
-int JumlahOrang = 0;
+int jumlahOrang = 0;
 
 // security
 bool securityMode = false;
