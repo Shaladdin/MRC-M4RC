@@ -1,4 +1,8 @@
+#include <Arduino.h>
 #include <ArduinoJson.h>
+#include <ESP8266WiFi.h>
+#include <ArduinoWebsockets.h>
+using namespace websockets;
 
 // outputs pin
 #define buzzer D0
@@ -12,3 +16,11 @@ const int outputs[] = {lamp, fan, buzzer};
 const int inputs[] = {irDalam, irLuar};
 
 void pinInit();
+
+// Websocket
+void WebsocketInit();
+void WebsocketRun();
+extern bool activated;
+
+// Security
+extern bool securityMode;
