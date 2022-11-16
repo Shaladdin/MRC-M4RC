@@ -1,7 +1,7 @@
 #include <ArduinoJson.h>
+#include <SoftwareSerial.h>
 
 // outputs pin
-#define buzzer D0
 #define lamp D3
 #define fan D4
 const int outputs[] = {lamp, fan, buzzer};
@@ -12,3 +12,7 @@ const int outputs[] = {lamp, fan, buzzer};
 const int inputs[] = {irDalam, irLuar};
 
 void pinInit();
+// Software serial
+extern SoftwareSerial nano;
+void SerialInit();
+void SerialRun();

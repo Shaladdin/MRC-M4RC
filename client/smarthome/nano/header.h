@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <SoftwareSerial.h>
 #include <ArduinoJson.h>
 #include <MQ2.h>
 #include <DHT.h>
@@ -22,3 +23,8 @@ void SensorRun();
 // sensors reading
 extern float lpg, co, smoke,
     temp, humidity, hIndex;
+
+// Serial Comunication
+extern SoftwareSerial esp;
+void SerialInit();
+void SerialRun();

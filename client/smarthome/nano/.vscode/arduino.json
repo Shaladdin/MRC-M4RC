@@ -1,7 +1,7 @@
 {
-    "board": "arduino:avr:nano",
-    "sketch": "nano.ino",
-    "port": "COM32",
     "configuration": "cpu=atmega328old",
-    "output": "./Build"
+    "board": "arduino:avr:nano",
+    "port": "COM32",
+    "sketch": "nano.ino",
+    "programmer": "arduino:avrisp"
 }

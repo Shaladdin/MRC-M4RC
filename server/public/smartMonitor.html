@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Monitor</title>
+</head>
+<link rel="icon" type="image/png" href="media/img/icon.png" />
+<link rel="stylesheet" href="./style/common.css">
+<style>
+    .sensors {
+        display: flex;
+        justify-content: center;
+        gap: 10px 10px;
+        flex-wrap: wrap;
+    }
+
+    .content {
+        display: flex;
+        min-height: 85px;
+    }
+
+    .value h4,
+    .value {
+        color: var(--yellow);
+        padding: 0;
+        min-height: initial;
+    }
+
+    .api {
+        display: flex[];
+    }
+
+    .button {
+        background-color: var(--lightGreen);
+        height: 50%;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-width: initial;
+    }
+
+    /* .robobin {} */
+
+    .newSec {
+        display: flex;
+        max-width: 500px;
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .robobin .title {
+        max-width: 120px;
+    }
+
+    .bar {
+        background-color: var(--darkGreen);
+        border-radius: 5px;
+    }
+
+    .barFill {
+        background-color: var(--lightGreen);
+        border-radius: 5px;
+        width: 0%;
+        min-width: 16%;
+    }
+
+    .barFill h4 {
+        color: black;
+    }
+
+    .robobin .value {
+        padding: 5px 20px;
+    }
+
+    .smartRoom {
+        flex-direction: column;
+    }
+
+    .smartRoom .content {
+        background-color: rgba(0, 0, 0, 0);
+        justify-content: space-evenly;
+    }
+
+    .smartRoom .content div {
+        background-color: var(--lighterBack);
+        border-radius: 10px;
+        display: flex;
+        /* justify-content: center; */
+        align-items: center;
+    }
+
+    .monitor {
+        padding-right: 5px;
+    }
+
+    .smartRoom .content div h4 {
+        max-width: 50%;
+        text-align: center;
+    }
+
+    .smartRoom .content .security .value {
+        font-size: 30px;
+    }
+
+    .monitor .holder {
+        width: 50%;
+        height: 80%;
+    }
+
+    .smartRoom .content .monitor .button {
+        max-width: initial;
+        background-color: var(--lightGreen);
+        width: 90%;
+        height: 90%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        border: none;
+    }
+
+    .smartRoom .content .monitor .button:hover {
+        width: 95%;
+        height: 95%;
+        font-size: 25px;
+        background-color: var(--green);
+        /* left: -2.5%; */
+    }
+
+    .smartRoom .content .monitor .button h4 {
+        color: white;
+        font-size: 20px;
+        max-width: initial;
+    }
+
+    .notify {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        z-index: 999;
+
+        width: 100%;
+        height: 100%;
+        background-color: var(--notify);
+
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .notify button {
+        border-radius: 5px;
+        border: none;
+    }
+
+    .notify button:hover {
+        background-color: var(--lightGreen)
+    }
+</style>
+
+<body>
+    <div class="notify">
+        <h1>Security Alert!</h1>
+        <button class="">
+            <h4>ok</h4>
+        </button>
+    </div>
+
+    <header class="light">
+        <h1>Smart Monitor</h1>
+        <h3>MTsN 4 Jakarta</h3>
+    </header>
+
+    <div class="sensors">
+        <div class="light dht">
+            <h2>dht</h2>
+            <div class="content">
+                <div class="text">
+                    <h4>kelembapan:</h4>
+                    <h4>suhu ruang:</h4>
+                </div>
+                <div class="value">
+                    <h4>100%</h4>
+                    <h4>100</h4>
+                </div>
+            </div>
+        </div>
+        <div class="light mq2">
+            <h2>mq2</h2>
+            <div class="content">
+                <div class="text">
+                    <h4>gas co:</h4>
+                    <h4>gas lpg:</h4>
+                    <h4>asap:</h4>
+                </div>
+                <div class="value">
+                    <h4>100</h4>
+                    <h4>100</h4>
+                    <h4>100</h4>
+                </div>
+            </div>
+        </div>
+        <div class="light api">
+            <h2>Sensor Api</h2>
+            <div class="value button">
+                <h5>Aman</h5>
+            </div>
+        </div>
+    </div>
+    <div class="robobin light newSec">
+        <div class="title">
+            <h2>Robobin</h2>
+            <h4>kepenuhan sampah:</h4>
+        </div>
+        <div class="value">
+            <div id="metal">
+                <h2>sampah Metal:</h2>
+                <div class="bar">
+                    <div class="barFill">
+                        <h4>0%</h4>
+                    </div>
+                </div>
+            </div>
+            <div id="nonMetal">
+                <h2>sampah nonMetal:</h2>
+                <div class="bar">
+                    <div class="barFill">
+                        <h4>0%</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="smartRoom light newSec">
+        <h2>Room detection</h2>
+        <div class="content">
+            <div class="security">
+                <h4>Jumlah orang:</h4>
+                <h4 class="value">0</h4>
+            </div>
+            <div class="monitor">
+                <h4>Security system:</h4>
+                <div class="holder">
+                    <button class="button">
+                        <h4>Aktif</h4>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="holder">
+        <a href="./index.html" class="back">
+            <img src="./media/svg/back.svg" alt="">
+            <h4>go back to main menu</h4>
+        </a>
+    </div>
+</body>
+<script src="./js/ws.js"></script>
+<script src="./js/common.js"></script>
+<script>
+    // notify button
+    const notify = document.getElementsByClassName('notify')[0];
+    const okButton = notify.lastElementChild
+    okButton.addEventListener('click', () => {
+        notify.style.display = 'none';
+    });
+
+
+    const metal = {
+        bar: document.getElementById("metal").lastElementChild.lastElementChild,
+        text: HTMLElement
+    };
+    metal.text = metal.bar.lastElementChild;
+    const nonMetal = {
+        bar: document.getElementById("nonMetal").lastElementChild.lastElementChild,
+        text: HTMLElement
+    }
+    nonMetal.text = nonMetal.bar.lastElementChild;
+    const dhtValues = document.getElementsByClassName("dht")[0].lastElementChild.lastElementChild.children
+    const mq2Values = document.getElementsByClassName("mq2")[0].lastElementChild.lastElementChild.children
+
+
+    const dht = { humidity: dhtValues[0], suhu: dhtValues[1] };
+    const mq2 = { co: mq2Values[0], lpg: mq2Values[1], smoke: mq2Values[2] };
+    const api = document.getElementsByClassName("value button")[0];
+    const robobin = { metal, nonMetal };
+    const roomDetection = {
+        jumlah: document.getElementsByClassName('security')[0].lastElementChild,
+        button: document.getElementsByClassName('monitor')[0].lastElementChild.lastElementChild
+    };
+
+    const doc = { dht, mq2, api, robobin, roomDetection };
+    var securityMode = false;
+
+    function updateButton() {
+        doc.roomDetection.button.style.backgroundColor = securityMode ? 'var(--lightGreen)' : 'var(--backGreen)'
+        doc.roomDetection.button.lastElementChild.textContent = securityMode ? 'Aktif' : 'mati:';
+        doc.roomDetection.button.lastElementChild.style.color = securityMode ? 'white' : 'var(--lighterBack)';
+    }
+
+    init(socket => {
+        var connected, mode = false;
+
+        console.log(socket)
+        // security button
+        doc.roomDetection.button.addEventListener('click', () => {
+            securityMode = !securityMode;
+            updateButton();
+            socket.send(stringify({
+                msg: 'security mode',
+                mode: securityMode
+            }));
+        })
+
+        socket.send(stringify({ msg: "connectClient" }));
+        socket.addEventListener('message', (msg) => {
+            const res = objify(msg.data);
+            if (res.msg === 'connected') {
+                connected = true;
+                socket.send(stringify({
+                    msg: "change mode",
+                    mode: "sensorStream"
+                }));
+                return;
+            };
+            if (!connected) return;
+            if (res.msg === 'security alert') {
+                notify.style.display = 'flex';
+            }
+            if (res.msg === 'change mode response') {
+                mode = res.mode;
+                console.log('requesting data');
+                socket.send(stringify({
+                    msg: "device data req"
+                }))
+            }
+            if (mode === 'sensorStream') {
+                if (res.msg === undefined) {
+                    const { round } = Math
+                    const { smartHome, roboBin } = res;
+
+                    // Smart Home 
+                    doc.dht.suhu.textContent = round(smartHome.suhu);
+                    doc.dht.humidity.textContent = round(smartHome.humidity) + '%';
+
+                    doc.api.style.backgroundColor = smartHome.api === true ? 'red' : 'var(--lightGreen)';
+                    doc.api.lastElementChild.style.color = smartHome.api === true ? 'var(--yellow)' : 'white';
+                    doc.api.lastElementChild.textContent = smartHome.api === true ? 'API!' : 'Aman';
+
+                    doc.mq2.co.textContent = round(smartHome.gas.co);
+                    doc.mq2.lpg.textContent = round(smartHome.gas.lpg);
+                    doc.mq2.smoke.textContent = round(smartHome.gas.smoke);
+
+                    // robobin
+                    doc.robobin.metal.text.textContent = round(roboBin.metal) + '%';
+                    doc.robobin.metal.bar.style.width = roboBin.metal + '%';
+
+                    doc.robobin.nonMetal.text.textContent = round(roboBin.nonMetal) + '%';
+                    doc.robobin.nonMetal.bar.style.width = roboBin.nonMetal + '%';
+
+                    // room detection
+                    doc.roomDetection.jumlah.style.color = smartHome.orang === 0 ? 'var(--backGreen)' : 'var(--yellow)';
+                    doc.roomDetection.jumlah.textContent = smartHome.orang;
+                }
+            }
+        });
+    });
+    // {
+    //     "smartHome": {
+    //         "suhu": 27.79999924,
+    //         "humidity": 37,
+    //         "gas": {
+    //             "co": 0.004595334,
+    //             "lpg": 0.008170504
+    //         }
+    //     }, "roboBin": {
+    //         "metal": 27.906976744186046,
+    //         "nonMetal": 102.56410256410257
+    //     }
+    // }
+</script>
+
+</html>

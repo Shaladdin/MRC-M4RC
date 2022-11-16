@@ -178,7 +178,6 @@ const usersModule = {
     user: class {
         constructor(ws) {
             // const ws = WebSocket;
-
             this.ws = ws;
             this.id = ws.device;
 
