@@ -1,3 +1,4 @@
+#line 1 "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\nano\\header.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <MQ2.h>

@@ -1,0 +1,67 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\cores\\arduino"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\variants\\eightanaloginputs"
+  },
+  {
+    "Sourcefile": "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\nano\\Build\\sketch\\nano.ino.cpp",
+    "Include": "ArduinoJson.h",
+    "Includepath": "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\ArduinoJson\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\nano\\Build\\sketch\\nano.ino.cpp",
+    "Include": "MQ2.h",
+    "Includepath": "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\MQ-2-sensor-library-master\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\nano\\Build\\sketch\\nano.ino.cpp",
+    "Include": "DHT.h",
+    "Includepath": "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\DHT_sensor_library"
+  },
+  {
+    "Sourcefile": "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\nano\\Build\\sketch\\nano.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\nano\\Build\\sketch\\pins.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\nano\\Build\\sketch\\sensor.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\MQ-2-sensor-library-master\\src\\MQ2.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\DHT_sensor_library\\DHT.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\DHT_sensor_library\\DHT_U.cpp",
+    "Include": "Adafruit_Sensor.h",
+    "Includepath": "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\Adafruit_Sensor-master"
+  },
+  {
+    "Sourcefile": "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\DHT_sensor_library\\DHT_U.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\Adafruit_Sensor-master\\Adafruit_Sensor.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]
