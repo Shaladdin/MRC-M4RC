@@ -1,4 +1,5 @@
 #include <ArduinoJson.h>
+#include <Arduino.h>
 #include <SoftwareSerial.h>
 
 // outputs pin
@@ -7,11 +8,17 @@
 const int outputs[] = {lamp, fan, buzzer};
 
 // ir
-#define irDalam D5
-#define irLuar D6
+#define irDalam D6
+#define irLuar D5
 const int inputs[] = {irDalam, irLuar};
 
 void pinInit();
+
+// room detection
+extern volatile int jumlahOrang;
+void RoomDetectionInit();
+void RoomDetectionRun();
+
 // Software serial
 extern SoftwareSerial nano;
 void SerialInit();
