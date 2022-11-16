@@ -10,11 +10,13 @@
 <link rel="icon" type="image/png" href="media/img/icon.png" />
 <link rel="stylesheet" href="./style/common.css">
 <style>
-    body {
+    body,
+    html {
         overflow-x: hidden;
     }
 
     #main {
+        height: 0%;
         display: flex;
         width: 200%;
         position: relative;
@@ -192,16 +194,19 @@
         transition: background-color 0.2s cubic-bezier(0, 0.59, 0, 1), padding 0.2s ease-in-out, right 0.2s ease-in-out, bottom 0.2s ease-in-out;
     }
 
-    #switch:hover {
-        --scale: 5px;
-        padding: calc(var(--pading) + var(--scale));
-        right: calc(var(--right) - var(--scale));
-        bottom: calc(var(--bottom) - var(--scale));
-        background-color: var(--lighterBack);
-    }
-
     #switch:active {
         background-color: var(--lightGreen);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+
+        #switch:hover {
+            --scale: 5px;
+            background-color: var(--lighterBack);
+        }
+        #switch:active {
+            background-color: var(--lightGreen);
+        }
     }
 </style>
 
