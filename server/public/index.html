@@ -10,6 +10,17 @@
 <link rel="icon" type="image/png" href="media/img/icon.png" />
 <link rel="stylesheet" href="./style/common.css">
 <style>
+    body {
+        overflow-x: hidden;
+    }
+
+    #main {
+        display: flex;
+        width: 200%;
+        position: relative;
+        transition: all 0.8s cubic-bezier(0.71, -0.31, 0.31, 1.52);
+    }
+
     .sensors {
         display: flex;
         justify-content: center;
@@ -49,7 +60,7 @@
         display: flex;
         max-width: 500px;
         width: 90%;
-        margin: 20px auto;
+        margin: 15px auto;
     }
 
     .robobin .title {
@@ -160,6 +171,38 @@
     .notify button:hover {
         background-color: var(--lightGreen)
     }
+
+
+    #switch {
+        --right: 15px;
+        --bottom: 10px;
+        --pading: 10px;
+
+        z-index: 999;
+        position: fixed;
+        right: var(--right);
+        bottom: var(--bottom);
+
+        width: 50px;
+        height: 50px;
+
+        background-color: var(--backGreen);
+        padding: var(--pading);
+        border-radius: 20px;
+        transition: background-color 0.2s cubic-bezier(0, 0.59, 0, 1), padding 0.2s ease-in-out, right 0.2s ease-in-out, bottom 0.2s ease-in-out;
+    }
+
+    #switch:hover {
+        --scale: 5px;
+        padding: calc(var(--pading) + var(--scale));
+        right: calc(var(--right) - var(--scale));
+        bottom: calc(var(--bottom) - var(--scale));
+        background-color: var(--lighterBack);
+    }
+
+    #switch:active {
+        background-color: var(--lightGreen);
+    }
 </style>
 
 <body>
@@ -169,98 +212,101 @@
             <h4>ok</h4>
         </button>
     </div>
-
     <header class="light">
         <h1>Smart Monitor</h1>
         <h3>MTsN 4 Jakarta</h3>
     </header>
-
-    <div class="sensors">
-        <div class="light dht">
-            <h2>dht</h2>
-            <div class="content">
-                <div class="text">
-                    <h4>kelembapan:</h4>
-                    <h4>suhu ruang:</h4>
+    <div id="switch"><img src="./media/svg/monitor.svg" alt=""></div>
+    <div id="main">
+        <div class="subBud" id="smartMonitor">
+            <div class="sensors">
+                <div class="light dht">
+                    <h2>dht</h2>
+                    <div class="content">
+                        <div class="text">
+                            <h4>kelembapan:</h4>
+                            <h4>suhu ruang:</h4>
+                        </div>
+                        <div class="value">
+                            <h4>100%</h4>
+                            <h4>100</h4>
+                        </div>
+                    </div>
                 </div>
-                <div class="value">
-                    <h4>100%</h4>
-                    <h4>100</h4>
+                <div class="light mq2">
+                    <h2>mq2</h2>
+                    <div class="content">
+                        <div class="text">
+                            <h4>gas co:</h4>
+                            <h4>gas lpg:</h4>
+                            <h4>asap:</h4>
+                        </div>
+                        <div class="value">
+                            <h4>100</h4>
+                            <h4>100</h4>
+                            <h4>100</h4>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="light mq2">
-            <h2>mq2</h2>
-            <div class="content">
-                <div class="text">
-                    <h4>gas co:</h4>
-                    <h4>gas lpg:</h4>
-                    <h4>asap:</h4>
-                </div>
-                <div class="value">
-                    <h4>100</h4>
-                    <h4>100</h4>
-                    <h4>100</h4>
-                </div>
-            </div>
-        </div>
-        <div class="light api">
-            <h2>Sensor Api</h2>
-            <div class="value button">
-                <h5>Aman</h5>
-            </div>
-        </div>
-    </div>
-    <div class="robobin light newSec">
-        <div class="title">
-            <h2>Robobin</h2>
-            <h4>kepenuhan sampah:</h4>
-        </div>
-        <div class="value">
-            <div id="metal">
-                <h2>sampah Metal:</h2>
-                <div class="bar">
-                    <div class="barFill">
-                        <h4>0%</h4>
+                <div class="light api">
+                    <h2>Sensor Api</h2>
+                    <div class="value button">
+                        <h5>Aman</h5>
                     </div>
                 </div>
             </div>
-            <div id="nonMetal">
-                <h2>sampah nonMetal:</h2>
-                <div class="bar">
-                    <div class="barFill">
-                        <h4>0%</h4>
+            <div class="robobin light newSec">
+                <div class="title">
+                    <h2>Robobin</h2>
+                    <h4>kepenuhan sampah:</h4>
+                </div>
+                <div class="value">
+                    <div id="metal">
+                        <h2>sampah Metal:</h2>
+                        <div class="bar">
+                            <div class="barFill">
+                                <h4>0%</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="nonMetal">
+                        <h2>sampah nonMetal:</h2>
+                        <div class="bar">
+                            <div class="barFill">
+                                <h4>0%</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="smartRoom light newSec">
+                <h2>Room detection</h2>
+                <div class="content">
+                    <div class="security">
+                        <h4>Jumlah orang:</h4>
+                        <h4 class="value">0</h4>
+                    </div>
+                    <div class="monitor">
+                        <h4>Security system:</h4>
+                        <div class="holder">
+                            <button class="button">
+                                <h4>Aktif</h4>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="smartRoom light newSec">
-        <h2>Room detection</h2>
-        <div class="content">
-            <div class="security">
-                <h4>Jumlah orang:</h4>
-                <h4 class="value">0</h4>
-            </div>
-            <div class="monitor">
-                <h4>Security system:</h4>
-                <div class="holder">
-                    <button class="button">
-                        <h4>Aktif</h4>
-                    </button>
-                </div>
-            </div>
+        <div class="subBud" id="smartRemote">
+            <h1>hello</h1>
         </div>
-    </div>
-    <div class="holder">
-        <a href="./index.html" class="back">
-            <img src="./media/svg/back.svg" alt="">
-            <h4>go back to main menu</h4>
-        </a>
     </div>
 </body>
+
 <script src="./js/ws.js"></script>
 <script src="./js/common.js"></script>
+
+<!-- websocket -->
 <script>
     // notify button
     const notify = document.getElementsByClassName('notify')[0];
@@ -382,6 +428,23 @@
     //         "nonMetal": 102.56410256410257
     //     }
     // }
+</script>
+<script>
+    // true = monitor, false remote
+    var isMonitor = true;
+    const main = document.getElementById("main");
+    const Switch = document.getElementById("switch");
+    const Simg = Switch.firstChild;
+    const imgDir = document.location.href.replace('index.html', '') + 'media/svg/'
+    const remote = 'remote.svg';
+    const monitor = 'monitor.svg';
+    main.style.right = isMonitor ? '0' : '100%';
+
+    Switch.addEventListener('click', () => {
+        isMonitor = !isMonitor;
+        Simg.src = imgDir + (isMonitor ? monitor : remote);
+        main.style.right = isMonitor ? '0' : '100%';
+    })
 </script>
 
 </html>
