@@ -1,6 +1,6 @@
 #include "header.h"
 
-#define DEBUG false
+#define DEBUG true
 
 volatile int jumlahOrang = 0;
 

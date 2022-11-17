@@ -19,17 +19,13 @@
             "includePath": [
                 "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\tools\\sdk\\include",
                 "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\tools\\sdk\\lwip2\\include",
-<<<<<<< HEAD
-                "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\cores\\esp8266",
-                "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\variants\\nodemcu",
-                "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\ArduinoJson\\src",
-                "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\libraries\\SoftwareSerial\\src",
-=======
                 "c:\\Users\\Shaladdin\\Robotik\\Project\\LOMBA\\MRC\\client\\smarthome\\esp\\Build\\core",
                 "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\cores\\esp8266",
                 "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\variants\\nodemcu",
                 "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\ArduinoJson\\src",
->>>>>>> esp--roomDetection
+                "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\libraries\\SoftwareSerial\\src",
+                "C:\\Users\\LENOVO\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.0\\libraries\\ESP8266WiFi\\src",
+                "C:\\Users\\LENOVO\\Documents\\Arduino\\libraries\\ArduinoWebsockets\\src",
                 "c:\\users\\lenovo\\appdata\\local\\arduino15\\packages\\esp8266\\tools\\xtensa-lx106-elf-gcc\\3.0.0-newlib4.0.0-gnu23-48f7b08\\xtensa-lx106-elf\\include\\c++\\10.2.0",
                 "c:\\users\\lenovo\\appdata\\local\\arduino15\\packages\\esp8266\\tools\\xtensa-lx106-elf-gcc\\3.0.0-newlib4.0.0-gnu23-48f7b08\\xtensa-lx106-elf\\include\\c++\\10.2.0\\xtensa-lx106-elf",
                 "c:\\users\\lenovo\\appdata\\local\\arduino15\\packages\\esp8266\\tools\\xtensa-lx106-elf-gcc\\3.0.0-newlib4.0.0-gnu23-48f7b08\\xtensa-lx106-elf\\include\\c++\\10.2.0\\backward",

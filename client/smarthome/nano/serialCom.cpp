@@ -1,5 +1,7 @@
 #include "header.h"
 
+#define PINGGER false
+
 // Hardware serial
 #define Rx 5
 #define Tx 6
@@ -10,6 +12,7 @@ SoftwareSerial esp(Rx, Tx);
 String serialMsg = "";
 bool fromSerial = false;
 bool serialAvilable = true;
+bool connectedToEsp = false;
 
 // serial function
 
@@ -45,7 +48,7 @@ void Send(String msg, int size, bool toSerial = false)
         ;
     if (!toSerial)
         esp.println(msg);
-    Serial.println(toSerial ? String(F("message: ")) + msg : String(F("sending to nano:{\n")) + msg + F("\n}"));
+    Serial.println(toSerial ? String(F("message: ")) + msg : String(F("sending to esp:{\n")) + msg + F("\n}"));
 }
 void sendError(String msg, int size, bool toSerial = false)
 {
@@ -67,6 +70,9 @@ void SerialInit()
         delay(1000);
     } while (!esp);
     Serial.println(F("\nesp connected\n"));
+#if PINGGER
+    Send(basicRes(F("ping")), 48);
+#endif
 }
 
 void SerialRun()
@@ -107,12 +113,18 @@ void SerialRun()
                 Send(basicRes("pong"), 48, fromSerial);
                 serialAvilable = true;
                 Serial.println(F("serial com activated from ping"));
+#if !PINGGER
+                connectedToEsp = true;
+#endif
                 return;
             }
             if (doc[F("type")] == F("pong"))
             {
                 serialAvilable = true;
                 Serial.println(F("serial com activated from pong"));
+#if PINGGER
+                connectedToEsp = true;
+#endif
                 return;
             }
             if (doc[F("type")] == F("disconnect!"))

@@ -26,5 +26,6 @@ extern float lpg, co, smoke,
 
 // Serial Comunication
 extern SoftwareSerial esp;
+extern bool connectedToEsp;
 void SerialInit();
 void SerialRun();

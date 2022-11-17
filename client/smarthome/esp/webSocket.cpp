@@ -1,6 +1,6 @@
 #include "header.h"
 
-#define WIFI 2
+#define WIFI 4
 
 // IOT var
 #if WIFI == 1
@@ -11,6 +11,16 @@ const char *password = "123456789"; // Enter Password
 const char *ssid = "R.Guru New";    // Enter SSID
 const char *password = "B15m1ll4h"; // Enter Password
 #endif
+#if WIFI == 3
+const char *ssid = "Mas MHD";    // Enter SSID
+const char *password = "Fahri_Ali-17082016"; // Enter Password
+#endif
+#if WIFI == 4
+const char *ssid = "Adzka";    // Enter SSID
+const char *password = "123456789"; // Enter Password
+#endif
+
+
 const char *host = "Si-Santui-M4RC.shaladddin.repl.co"; // Enter server adress
 const char *wsProtocol = "wss://";
 const uint16_t port = 8080; // Enter server port

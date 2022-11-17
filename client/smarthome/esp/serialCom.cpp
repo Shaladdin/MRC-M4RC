@@ -1,5 +1,7 @@
 #include "header.h"
 
+#define PINGGER true
+
 // Hardware serial
 #define Rx D3
 #define Tx D4
@@ -10,6 +12,7 @@ SoftwareSerial nano(Rx, Tx);
 String serialMsg = "";
 bool fromSerial = false;
 bool serialAvilable = true;
+bool connectedToNano = false;
 
 // serial function
 String basicRes(String type)
@@ -32,7 +35,7 @@ bool readSerial()
         fromSerial = false;
     }
     if (msgPending)
-        Serial.println(String(F("Incoming from ")) + (fromSerial ? F("Serial") : F("esp")) + F(" :{\n ") + serialMsg + F("\n}\n "));
+        Serial.println(String(F("Incoming from ")) + (fromSerial ? F("Serial") : F("nano")) + F(" :{\n ") + serialMsg + F("\n}\n "));
     return msgPending;
 }
 void Send(String msg, int size, bool toSerial = false)
@@ -69,7 +72,9 @@ void SerialInit()
         nano.println();
     } while (!nano);
     Serial.println(F("\nconnected to nano\n"));
+#if PINGGER
     Send(basicRes(F("ping")), 48);
+#endif
 }
 
 // run serial
@@ -110,12 +115,18 @@ void SerialRun()
                 Send(basicRes("pong"), 48, fromSerial);
                 serialAvilable = true;
                 Serial.println(F("serial com activated from ping"));
+#if !PINGGER
+                connectedToNano = true;
+#endif
                 return;
             }
             if (doc[F("type")] == F("pong"))
             {
                 serialAvilable = true;
                 Serial.println(F("serial com activated from pong"));
+#if PINGGER
+                connectedToNano = true;
+#endif
                 return;
             }
             if (doc[F("type")] == F("disconnect!"))

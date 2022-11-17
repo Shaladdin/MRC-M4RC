@@ -8,6 +8,7 @@ using namespace websockets;
 // outputs pin
 #define lamp D3
 #define fan D4
+#define buzzer D0
 const int outputs[] = {lamp, fan, buzzer};
 
 // ir
@@ -33,5 +34,6 @@ void RoomDetectionRun();
 
 // Software serial
 extern SoftwareSerial nano;
+extern bool connectedToNano;
 void SerialInit();
 void SerialRun();
