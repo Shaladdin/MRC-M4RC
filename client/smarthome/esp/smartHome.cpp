@@ -2,8 +2,8 @@
 
 #define OTOMATIS 0
 #define MANUAL 1
-bool homeMode;
-float maxBright, maxFlame, maxTemp;
+bool controllMode;
+float maxBright, maxFlame, maxTemp, maxGas;
 
 const int turnOffOnEmpty[] = {lamp, fan};
 void OtomatisRun()
@@ -24,7 +24,7 @@ void ManualRun(){
 
 }
 
-void SmartHome()
+void SmartHomeRun()
 {
 
 }

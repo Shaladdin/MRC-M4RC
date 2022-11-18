@@ -396,9 +396,8 @@
                     const { smartHome, roboBin } = res;
 
                     // Smart Home 
-                    doc.dht.suhu.textContent = round(smartHome.suhu);
+                    doc.dht.suhu.textContent = round(smartHome.suhu) + 'c°';
                     doc.dht.humidity.textContent = round(smartHome.humidity) + '%';
-
                     doc.api.style.backgroundColor = smartHome.api === true ? 'red' : 'var(--lightGreen)';
                     doc.api.lastElementChild.style.color = smartHome.api === true ? 'var(--yellow)' : 'white';
                     doc.api.lastElementChild.textContent = smartHome.api === true ? 'API!' : 'Aman';

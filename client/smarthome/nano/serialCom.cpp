@@ -105,7 +105,7 @@ void SerialInit()
     do
     {
         Serial.println(F("connecting to esp..."));
-        esp.begin(19200);
+        esp.begin(9600);
         delay(1000);
     } while (!esp);
     Serial.println(F("\nesp connected\n"));

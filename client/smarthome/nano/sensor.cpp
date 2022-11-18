@@ -62,6 +62,6 @@ void SensorRun()
     data_gas[F("lpg")] = lpg;
 
     serializeJson(doc, streamStr);
-    stream(streamStr, 256);
+    stream(streamStr, 384);
     delay(500);
 }

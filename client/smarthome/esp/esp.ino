@@ -19,7 +19,7 @@ void loop()
 {
     SerialRun();
     WebsocketRun();
-    OtomatisRun();
+    SmartHomeRun();
 }
 
 // Draft

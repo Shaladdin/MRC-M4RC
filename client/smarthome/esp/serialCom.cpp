@@ -4,6 +4,8 @@
 
 #define WAIT true
 
+#define DEBUG true
+
 // Hardware serial
 #define Rx D3
 #define Tx D4
@@ -108,7 +110,7 @@ void SerialInit()
     do
     {
         Serial.println(F("connecting to nano..."));
-        nano.begin(19200);
+        nano.begin(9600);
         delay(1000);
     } while (!nano);
     Serial.println(F("\nconnected to nano\n"));
@@ -211,7 +213,24 @@ void SerialRun()
                     smoke = gas[F("smoke")].as<float>();
                     co = gas[F("co")].as<float>();
                     lpg = gas[F("lpg")].as<float>();
-                    StreamSensors();
+
+                    data[F("orang")] = jumlahOrang;
+
+                    String out;
+                    serializeJson(doc, out);
+#if DEBUG
+                    Serial.println(String(F("\nlpg:\t")) + String(lpg) +
+                                   F("\nco:\t") + String(co) +
+                                   F("\nsmoke:\t") + String(smoke) +
+                                   F("\ntemp:\t") + String(temp) +
+                                   F("\nhumid:\t") + String(humidity) +
+                                   F("\nhIndex:\t") + String(hIndex) +
+                                   F("\nflame:\t") + String(flame) +
+                                   F("\norang:\t") + String(jumlahOrang) +
+                                   F("\nlight:\t") + String(light));
+                    Serial.println(F("sending to web"));
+#endif
+                    sendWs(out);
                     return;
                 }
             }

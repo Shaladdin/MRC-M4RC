@@ -61,9 +61,9 @@ const device = {
                 if (res === false) { ws.send(deserializeError); return; };
                 // if stream
                 if (res.type === 'stream') {
-                    const { suhu, humidity, gas, api, orang } = res.data;
                     if (res.stream === 'sensors') {
-                        data.suhu = suhu; data.api = api; data.humidity = humidity; data.gas = gas; data.orang = orang;
+                        const { suhu, humidity, gas, flame, light, orang } = res.data;
+                        data.suhu = suhu; data.api = flame; data.light = light; data.humidity = humidity; data.gas = gas; data.orang = orang;
                         updateDevice("smartHome", data);
                         updateStream();
                         return;
@@ -72,21 +72,46 @@ const device = {
                         msg: "error",
                         err: "no stream found"
                     }));
-                }
-                else if (res.type === 'notify') {
+                    return;
+                };
+                if (res.type === 'notify') {
                     if (res.notify === 'security') {
                         const { users } = usersModule;
                         for (const [key, value] of Object.entries(users))
-                            value.ws.send(stringify({msg:'security alert'}));
-                        return
+                            value.ws.send(stringify({ msg: 'security alert' }));
+                        return;
                     }
+                    ws.send(stringify({
+                        msg: "error",
+                        err: "no notification found"
+                    }));
+                    return;
                 }
+                if (res.type === 'load') {
+                    const { setting } = smartHome;
+                    ws.send(stringify({
+                        "type": "loadUp",
+                        "data": {
+                            controllMode: setting.controllMode,
+                            maxBright: setting.maxBright,
+                            maxFlame: setting.maxFlame,
+                            maxTemp: setting.maxTemp,
+                            maxGas: setting.maxGas,
+                        }
+                    }))
+                    return;
+                }
+                ws.send(stringify({
+                    msg: "error",
+                    err: "request unrecognize"
+                }));
             })
         },
         data: {
             suhu: undefined,
             humidity: undefined,
-            api: false,
+            api: undefined,
+            light: undefined,
             orang: undefined,
             security: false,
             gas: {
@@ -94,6 +119,12 @@ const device = {
                 lpg: undefined,
                 smoke: undefined
             },
+            // setting
+            controllMode: "otomatis",
+            maxBright: 80.0,
+            maxFlame: 20.0,
+            maxTemp: 29.0,
+            maxGas: 1.0,
         },
         mode: 'automatic',
         getData: async () => {

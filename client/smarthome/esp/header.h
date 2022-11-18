@@ -19,13 +19,13 @@ const int inputs[] = {irDalam, irLuar};
 void pinInit();
 
 // Websocket
+void sendWs(String &in);
 void WebsocketInit();
 void WebsocketRun();
 extern bool activated;
 
 // Security
 extern bool securityMode;
-
 
 // room detection
 extern volatile int jumlahOrang;
@@ -49,4 +49,7 @@ extern float lpg, co, smoke,
 // StreamSensor
 void StreamSensors();
 
-// Otomatis
+// smartHome
+extern bool controllMode;
+extern float maxBright, maxFlame, maxTemp, maxGas;
+void SmartHomeRun();
