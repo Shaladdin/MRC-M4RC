@@ -24,3 +24,22 @@ extern bool activated;
 
 // Security
 extern bool securityMode;
+
+// room detection
+extern volatile int jumlahOrang;
+void RoomDetectionInit();
+void RoomDetectionRun();
+
+// Software serial
+extern SoftwareSerial nano;
+extern bool connectedToNano;
+void SerialInit();
+void SerialRun();
+
+// sensors variable
+extern float lpg, co, smoke,
+    temp, humidity, flame, light;
+
+    // Mode Otomatis
+    void
+    OtomatisRun();

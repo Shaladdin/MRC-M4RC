@@ -3,12 +3,14 @@ void setup()
 {
     Serial.begin(115200);
     WebsocketInit();
+    SerialInit();
     pinInit();
 }
 
 void loop()
 {
     WebsocketRun();
+    OtomatisRun();
 }
 
 // Draft
