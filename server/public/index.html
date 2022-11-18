@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Si Santui</title>
+    <title>Home Monitor</title>
 </head>
-
-<link rel="stylesheet" href="./style/common.css">
 <link rel="icon" type="image/png" href="media/img/icon.png" />
+<link rel="stylesheet" href="./style/common.css">
 <style>
     body,
     html {
@@ -24,6 +23,14 @@
         transition: all 0.8s cubic-bezier(0.71, -0.31, 0.31, 1.52);
     }
 
+    div.subBud {
+        width: 100%;
+        height: 100%;
+        margin-bottom: 80px;
+    }
+
+
+    /* sensor */
     .sensors {
         display: flex;
         justify-content: center;
@@ -57,8 +64,10 @@
         max-width: initial;
     }
 
-    /* .robobin {} */
 
+
+
+    /* .robobin */
     .newSec {
         display: flex;
         max-width: 500px;
@@ -90,6 +99,11 @@
         padding: 5px 20px;
     }
 
+
+
+
+
+    /* smart room */
     .smartRoom {
         flex-direction: column;
     }
@@ -125,7 +139,7 @@
         height: 80%;
     }
 
-    .smartRoom .content .monitor .button {
+    button.button {
         max-width: initial;
         background-color: var(--lightGreen);
         width: 90%;
@@ -136,20 +150,25 @@
         border: none;
     }
 
-    .smartRoom .content .monitor .button:hover {
+    button.button:hover {
         width: 95%;
         height: 95%;
-        font-size: 25px;
+        /* font-size: 25px; */
         background-color: var(--green);
         /* left: -2.5%; */
     }
 
-    .smartRoom .content .monitor .button h4 {
+    .smartRoom .content .monitor .button h4,
+    button.button h4 {
         color: white;
         font-size: 20px;
         max-width: initial;
     }
 
+
+
+
+    /* notification */
     .notify {
         position: fixed;
         bottom: 0;
@@ -176,6 +195,9 @@
     }
 
 
+
+
+    /* switch */
     #switch {
         --right: 15px;
         --bottom: 10px;
@@ -189,10 +211,11 @@
         width: 50px;
         height: 50px;
 
+        /* border: 3px solid var(--black); */
         background-color: var(--backGreen);
         padding: var(--pading);
         border-radius: 20px;
-        transition: background-color 0.2s cubic-bezier(0, 0.59, 0, 1), padding 0.2s ease-in-out, right 0.2s ease-in-out, bottom 0.2s ease-in-out;
+        transition: background-color 0.5s cubic-bezier(0, 0.65, 0, 1), padding 0.2s ease-in-out, right 0.2s ease-in-out, bottom 0.2s ease-in-out;
     }
 
     #switch:active {
@@ -205,9 +228,28 @@
             --scale: 5px;
             background-color: var(--lighterBack);
         }
+
         #switch:active {
             background-color: var(--lightGreen);
         }
+    }
+
+
+
+    /* smart remote */
+    #smartRemote {
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+    }
+
+    #mode {
+        /* max-width: 485px; */
+        padding-bottom: 15px;
+    }
+
+    #mode .holder {
+        height: 80px;
     }
 </style>
 
@@ -219,7 +261,7 @@
         </button>
     </div>
     <header class="light">
-        <h1>Si-Santui</h1>
+        <h1>Smart Monitor</h1>
         <h3>MTsN 4 Jakarta</h3>
     </header>
     <div id="switch"><img src="./media/svg/monitor.svg" alt=""></div>
@@ -303,8 +345,20 @@
                 </div>
             </div>
         </div>
+
+
+
+
+        <!-- smart remote -->
         <div class="subBud" id="smartRemote">
-            <h1>hello</h1>
+            <div id="mode" class="light">
+                <h2>Mode Control</h1>
+                    <div class="holder">
+                        <button class="button">
+                            <h4>Otomatis</h4>
+                        </button>
+                    </div>
+            </div>
         </div>
     </div>
 </body>
@@ -443,13 +497,19 @@
     const imgDir = document.location.href.replace('index.html', '') + 'media/svg/'
     const remote = 'remote.svg';
     const monitor = 'monitor.svg';
-    main.style.right = isMonitor ? '0' : '100%';
+    const title = document.getElementsByTagName('header')[0].firstElementChild;
+    updatePage();
 
-    Switch.addEventListener('click', () => {
+    async function updatePage() {
         isMonitor = !isMonitor;
-        Simg.src = imgDir + (isMonitor ? monitor : remote);
         main.style.right = isMonitor ? '0' : '100%';
-    })
+        title.style.opacity = '0%';
+        Simg.src = imgDir + (isMonitor ? monitor : remote);
+        await delay(200);
+        title.innerText = "Smart " + (isMonitor ? "Monitor" : "Remote");
+        title.style.opacity = '100%';
+    }
+    Switch.addEventListener('click', updatePage);
 </script>
 
 </html>

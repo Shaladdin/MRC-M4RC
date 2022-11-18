@@ -15,3 +15,6 @@ const init = (onConnect) => new Promise((res, rej) => {
         socket = await init(onConnect);
     })
 })
+async function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
