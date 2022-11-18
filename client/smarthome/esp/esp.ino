@@ -1,13 +1,17 @@
 // connect all file
 #include "header.h"
+
+// sensors reading
+float lpg, co, smoke,
+    temp, humidity, hIndex,
+    flame, light;
+
 void setup()
 {
     Serial.begin(115200);
-    SerialInit();
-    while (!connectedToNano)
-        SerialRun();
-    WebsocketInit(); //
     pinInit();
+    WebsocketInit();
+    SerialInit();
     RoomDetectionInit();
 }
 

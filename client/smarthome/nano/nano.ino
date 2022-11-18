@@ -12,8 +12,5 @@ void setup()
 void loop()
 {
     SerialRun();
-    // wait to connect
-    if (!connectedToEsp)
-        return;
     SensorRun();
 }

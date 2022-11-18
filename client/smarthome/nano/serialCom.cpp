@@ -1,6 +1,7 @@
 #include "header.h"
 
 #define PINGGER false
+#define WAIT true
 
 // Hardware serial
 #define Rx 5
@@ -10,6 +11,7 @@
 // #define Tx D4
 SoftwareSerial esp(Rx, Tx);
 String serialMsg = "";
+String pendingMsg;
 bool fromSerial = false;
 bool serialAvilable = true;
 bool connectedToEsp = false;
@@ -20,44 +22,81 @@ String basicRes(String type)
 {
     return String(F("{  \"type\": \"")) + type + F("\"}");
 }
+
+bool breakeble()
+{
+    if (!pendingMsg.length())
+        return false;
+    bool hitNewLine = false;
+    String pendingHolder = pendingMsg;
+    pendingMsg = "";
+    serialMsg = "";
+    for (int i = 0; i <= pendingHolder.length(); i++)
+    {
+        if (pendingHolder[i] == '\0')
+            continue;
+        if (!hitNewLine && pendingHolder[i] == '\n')
+        {
+            hitNewLine = true;
+            i++;
+        }
+        if (pendingHolder.length() - i <= 1 && (pendingHolder[i] == '\n' || pendingHolder[0] == '\0'))
+            break;
+        if (!hitNewLine)
+            serialMsg += pendingHolder[i];
+        else
+            pendingMsg += pendingHolder[i];
+    }
+    return true;
+}
+
 bool readSerial()
 {
-    bool msgPending = false;
     while (Serial.available())
     {
-        serialMsg = Serial.readString();
-        msgPending = true;
+        pendingMsg += Serial.readString();
         fromSerial = true;
     }
     while (esp.available())
     {
-        serialMsg = esp.readString();
-        msgPending = true;
+        pendingMsg += esp.readString();
         fromSerial = false;
     }
+    bool msgPending = breakeble();
     if (msgPending)
         Serial.println(String(F("Incoming from ")) + (fromSerial ? F("Serial") : F("esp")) + F(" :{\n ") + serialMsg + F("\n}\n "));
+    if (pendingMsg == "\0")
+        pendingMsg = "";
     return msgPending;
 }
-void Send(String msg, int size, bool toSerial = false)
+
+// private debug
+void debugSend(String &msg, bool fromSerial = false)
+{
+    Serial.println(fromSerial ? (String(F("message: ")) + msg) : (String(F("sending to esp:{\n")) + msg + F("\n}")));
+}
+
+void stream(String msg, int size)
+{
+    Serial.println(F("Streaming to esp..."));
+    esp.println(F("S"));
+    esp.println(size);
+    esp.println(msg);
+    debugSend(msg);
+}
+
+void sendCom(String msg, int size, bool toSerial = false)
 {
     Serial.println(String(F("pending message with size of ")) + String(size) + F(" bytes"));
     if (!toSerial)
         esp.println(size);
-    while (!readSerial())
+    while (!readSerial() && serialMsg[0] != '!')
         ;
+    Serial.print("response is:");
+    Serial.println(serialMsg);
     if (!toSerial)
         esp.println(msg);
-    Serial.println(toSerial ? String(F("message: ")) + msg : String(F("sending to esp:{\n")) + msg + F("\n}"));
-}
-void sendError(String msg, int size, bool toSerial = false)
-{
-    DynamicJsonDocument error(size);
-    error[F("type")] = F("error");
-    error[F("err")] = msg;
-    String out;
-    serializeJson(error, out);
-    Send(out, size, toSerial);
+    debugSend(msg, size);
 }
 
 void SerialInit()
@@ -66,12 +105,17 @@ void SerialInit()
     do
     {
         Serial.println(F("connecting to esp..."));
-        esp.begin(9600);
+        esp.begin(19200);
         delay(1000);
     } while (!esp);
     Serial.println(F("\nesp connected\n"));
 #if PINGGER
-    Send(basicRes(F("ping")), 48);
+    sendCom(basicRes(F("ping")), 48);
+    connectedToEsp = true;
+#endif
+#if WAIT
+    while (!connectedToEsp)
+        SerialRun();
 #endif
 }
 
@@ -82,6 +126,16 @@ void SerialRun()
         {
             if (!fromSerial && !serialAvilable)
                 return;
+            bool isStream = serialMsg == F("stream");
+            if (isStream)
+            {
+                Serial.println(F("stream receaved"));
+                if (!readSerial())
+                {
+                    Serial.println(F("Missing size!"));
+                    return;
+                }
+            }
             unsigned int size = serialMsg.toInt();
             // if its not a valid number
             if (size <= 0)
@@ -90,27 +144,35 @@ void SerialRun()
                 return;
             }
             Serial.println(String(F("incoming msg with size of ")) + String(size) + F(" bytes"));
-
-            DynamicJsonDocument doc(size);
-            // if its from serial
-            if (fromSerial)
-                Serial.println(F("!"));
+            if (isStream)
+            {
+                if (!readSerial())
+                {
+                    Serial.println(F("Missing object!"));
+                    return;
+                }
+            }
             else
-                esp.println(F("!"));
-            // wait for the data
-            while (!readSerial())
-                ;
+            {
+                // if its from serial
+                if (fromSerial)
+                    Serial.println(F("!"));
+                else
+                    esp.println(F("!"));
+                // wait for the data
+                while (!readSerial())
+                    ;
+            }
+            DynamicJsonDocument doc(size);
             DeserializationError err = deserializeJson(doc, serialMsg);
             if (err)
             {
                 String errorMsg = err.f_str();
-                Serial.println(String(F("Error: ")) + errorMsg);
-                sendError(errorMsg, 192, fromSerial);
+                Serial.println(String(F("!!!!!!!!!!!!!\nError: ")) + errorMsg + F("\n!!!!!!!!!!!!!"));
                 return;
             }
             if (doc[F("type")] == F("ping"))
             {
-                Send(basicRes("pong"), 48, fromSerial);
                 serialAvilable = true;
                 Serial.println(F("serial com activated from ping"));
 #if !PINGGER
@@ -118,18 +180,9 @@ void SerialRun()
 #endif
                 return;
             }
-            if (doc[F("type")] == F("pong"))
-            {
-                serialAvilable = true;
-                Serial.println(F("serial com activated from pong"));
-#if PINGGER
-                connectedToEsp = true;
-#endif
-                return;
-            }
             if (doc[F("type")] == F("disconnect!"))
             {
-                Send(basicRes("disconnectForward"), 192);
+                sendCom(basicRes("disconnectForward"), 192);
                 goto disconnectSerial;
             }
             if (doc[F("type")] == F("disconnectForward"))

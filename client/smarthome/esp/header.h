@@ -29,6 +29,7 @@ extern bool securityMode;
 
 // room detection
 extern volatile int jumlahOrang;
+extern volatile bool emptyRoom;
 void RoomDetectionInit();
 void RoomDetectionRun();
 
@@ -37,3 +38,15 @@ extern SoftwareSerial nano;
 extern bool connectedToNano;
 void SerialInit();
 void SerialRun();
+
+// Sensor Data:
+
+// sensors reading
+extern float lpg, co, smoke,
+    temp, humidity, hIndex,
+    flame, light;
+
+// StreamSensor
+void StreamSensors();
+
+// Otomatis

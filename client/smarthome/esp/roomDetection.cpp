@@ -3,6 +3,7 @@
 #define DEBUG true
 
 volatile int jumlahOrang = 0;
+volatile bool emptyRoom = false;
 
 // room detection state
 #define EMPTY 0
@@ -74,7 +75,12 @@ void ICACHE_RAM_ATTR RoomDetectionRun()
             if (!inFirst)
                 jumlahOrang++;
             else
+            {
                 jumlahOrang--;
+                if (jumlahOrang < 0)
+                    jumlahOrang = 0;
+            }
+            emptyRoom = jumlahOrang == 0;
         }
         state = EMPTY;
     }
