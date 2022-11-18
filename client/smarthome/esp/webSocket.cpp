@@ -86,37 +86,40 @@ void WebsocketInit()
                      if (msgType == F("identity requested"))
                      {
                          // self identify to server
-                         String identifyMsg;
-                         StaticJsonDocument<64> identifyDoc;
-                         identifyDoc[F("msg")] = F("identity");
-                         identifyDoc[F("device")] = F("smartHome");
-                         serializeJson(identifyDoc, identifyMsg);
-                         sendWs(identifyMsg);
-                         return;
+                        String identifyMsg;
+                        StaticJsonDocument<64> identifyDoc;
+                        identifyDoc[F("msg")] = F("identity");
+                        identifyDoc[F("device")] = F("smartHome");
+                        serializeJson(identifyDoc, identifyMsg);
+                        sendWs(identifyMsg);
+                        return;
                      }
-                     if (msgType == F("connected")){
-                        String out;
+                     if (msgType == F("connected"))
+                     {
+                        String loadReq;
                         StaticJsonDocument<32> doc;
                         doc[F("type")] = F("load");
-                        serializeJson(doc,out);
-                        sendWs(out);
+                        serializeJson(doc, loadReq);
+                        Serial.println(loadReq);
+                        delay(500);
+                        sendWs(loadReq);
                         return;
                      }
                      if(msgType == F("loadUp")){
-                        activated = true;
-                        controllMode = data[F("controllMode")].as<bool>();
-                        maxBright = data[F("maxBright")].as<float>();
-                        maxFlame = data[F("maxFlame")].as<float>();
-                        maxTemp = data[F("maxTemp")].as<float>();
-                        maxGas = data[F("maxGas")].as<float>();
-                        
-                        Serial.println(String(F("\ncontrollMode:\t")) + String(controllMode) +
-                                   F("\nmaxBright:\t") + String(maxBright) +
-                                   F("\nmaxFlame:\t") + String(smoke) +
-                                   F("\nmaxTemp:\t") + String(maxTemp) +
-                                   F("\nmaxGas:\t") + String(maxGas));
-                        return;
-                     } });
+                         activated = true;
+                         controllMode = data[F("controllMode")].as<bool>();
+                         maxBright = data[F("maxBright")].as<float>();
+                         maxFlame = data[F("maxFlame")].as<float>();
+                         maxTemp = data[F("maxTemp")].as<float>();
+                         maxGas = data[F("maxGas")].as<float>();
+
+                         Serial.println(String(F("\ncontrollMode:\t")) + String(controllMode) +
+                                    F("\nmaxBright:\t") + String(maxBright) +
+                                    F("\nmaxFlame:\t") + String(smoke) +
+                                    F("\nmaxTemp:\t") + String(maxTemp) +
+                                    F("\nmaxGas:\t") + String(maxGas));
+                         return;
+                        } });
 #if WAIT
     while (!activated)
         WebsocketRun();

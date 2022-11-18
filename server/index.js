@@ -88,7 +88,7 @@ const device = {
                     return;
                 }
                 if (res.type === 'load') {
-                    const { setting } = smartHome;
+                    const { data: setting } = smartHome;
                     ws.send(stringify({
                         "type": "loadUp",
                         "data": {
@@ -295,6 +295,8 @@ wss.on('connection', (ws) => {
     const { log } = ws;
     // code for starting connection and handle web client
     ws.on('message', (msg) => {
+
+        ws.log(`incoming: ${msg}`);
         // update stuffs
         updateWs();
 
