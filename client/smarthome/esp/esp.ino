@@ -19,6 +19,7 @@ void loop()
 {
     SerialRun();
     WebsocketRun();
+    OtomatisRun();
 }
 
 // Draft
