@@ -20,11 +20,12 @@ void OtomatisRun()
 }
 
 // runned on webSocket.cpp
-void ManualRun(){
-
+void ManualRun()
+{
 }
 
 void SmartHomeRun()
 {
-
+    if (controllMode == OTOMATIS)
+        OtomatisRun();
 }

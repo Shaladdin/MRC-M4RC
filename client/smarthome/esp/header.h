@@ -53,3 +53,4 @@ void StreamSensors();
 extern bool controllMode;
 extern float maxBright, maxFlame, maxTemp, maxGas;
 void SmartHomeRun();
+void ManualRun();

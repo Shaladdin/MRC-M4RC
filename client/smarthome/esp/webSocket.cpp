@@ -1,6 +1,6 @@
 #include "header.h"
 
-#define WIFI 3
+#define WIFI 1
 
 // IOT var
 #if WIFI == 1
@@ -107,7 +107,7 @@ void WebsocketInit()
                      }
                      if(msgType == F("loadUp")){
                          activated = true;
-                         controllMode = data[F("controllMode")].as<bool>();
+                         controllMode = data[F("controllMode")].as<String>() == F("manual");
                          maxBright = data[F("maxBright")].as<float>();
                          maxFlame = data[F("maxFlame")].as<float>();
                          maxTemp = data[F("maxTemp")].as<float>();
