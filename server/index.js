@@ -90,7 +90,7 @@ const device = {
                 if (res.type === 'load') {
                     const { data: setting } = smartHome;
                     ws.send(stringify({
-                        "type": "loadUp",
+                        "msg": "loadUp",
                         "data": {
                             controllMode: setting.controllMode,
                             maxBright: setting.maxBright,
