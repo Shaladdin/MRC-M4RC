@@ -67,17 +67,20 @@
 
 
 
-    /* .robobin */
+    .robobin{
+        display: flex;
+        justify-content: center;
+    }
     .newSec {
         display: flex;
         max-width: 500px;
         width: 90%;
         margin: 15px auto;
     }
-
+/* 
     .robobin .title {
         max-width: 120px;
-    }
+    } */
 
     .bar {
         background-color: var(--darkGreen);
@@ -97,6 +100,7 @@
 
     .robobin .value {
         padding: 5px 20px;
+        width: 100%;
     }
 
 
@@ -304,13 +308,13 @@
                 </div>
             </div>
             <div class="robobin light newSec">
-                <div class="title">
+                <!-- <div class="title">
                     <h2>Robobin</h2>
                     <h4>kepenuhan sampah:</h4>
-                </div>
+                </div> -->
                 <div class="value">
                     <div id="metal">
-                        <h2>sampah Metal:</h2>
+                        <h2>cahaya ruang:</h2>
                         <div class="bar">
                             <div class="barFill">
                                 <h4>0%</h4>
@@ -318,7 +322,7 @@
                         </div>
                     </div>
                     <div id="nonMetal">
-                        <h2>sampah nonMetal:</h2>
+                        <h2>kepekaan api:</h2>
                         <div class="bar">
                             <div class="barFill">
                                 <h4>0%</h4>
@@ -461,11 +465,11 @@
                     doc.mq2.smoke.textContent = round(smartHome.gas.smoke);
 
                     // robobin
-                    doc.robobin.metal.text.textContent = round(roboBin.metal) + '%';
-                    doc.robobin.metal.bar.style.width = roboBin.metal + '%';
+                    doc.robobin.metal.text.textContent = round(smartHome.light) + '%';
+                    doc.robobin.metal.bar.style.width = smartHome.light + '%';
 
-                    doc.robobin.nonMetal.text.textContent = round(roboBin.nonMetal) + '%';
-                    doc.robobin.nonMetal.bar.style.width = roboBin.nonMetal + '%';
+                    doc.robobin.nonMetal.text.textContent = round(smartHome.api) + '%';
+                    doc.robobin.nonMetal.bar.style.width = smartHome.api + '%';
 
                     // room detection
                     doc.roomDetection.jumlah.style.color = smartHome.orang === 0 ? 'var(--backGreen)' : 'var(--yellow)';

@@ -1,2 +1,2 @@
 {"robot":"roboBin","data":{"metal":20,"nonMetal":4},"_id":"6cuZC0o8bc1nqpkH"}
-{"robot":"smartHome","data":{"suhu":25.8,"humidity":56,"api":5.865103,"orang":69,"security":true,"gas":{"smoke":0.020846,"co":0.005159,"lpg":0.008025},"controllMode":"otomatis","maxBright":80,"maxFlame":20,"maxTemp":29,"maxGas":1},"_id":"gbYOheDneGGO3j2H"}
+{"robot":"smartHome","data":{"suhu":26.7,"humidity":53,"api":2.8348,"light":29.22776,"security":false,"gas":{"smoke":0.029112,"co":0.007895,"lpg":0.010715},"controllMode":"otomatis","maxBright":80,"maxFlame":20,"maxTemp":29,"maxGas":1},"_id":"gbYOheDneGGO3j2H"}
