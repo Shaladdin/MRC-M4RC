@@ -134,7 +134,7 @@ const device = {
             // set up for empty data
             var dbRead = await db.read(db.sensor, { robot: "smartHome" })
             var { data: dbData } = dbRead;
-            data.suhu = dbData.suhu; data.humidity = dbData.humidity; data.api = dbData.api; data.gas = dbData.gas; data.orang = dbData.orang; data.light = light;
+            data.suhu = dbData.suhu; data.humidity = dbData.humidity; data.api = dbData.api; data.gas = dbData.gas; data.orang = dbData.orang; data.light = dbData.light;
 
             return device.smartHome.data
         },
