@@ -86,40 +86,56 @@ void WebsocketInit()
                      if (msgType == F("identity requested"))
                      {
                          // self identify to server
-                        String identifyMsg;
-                        StaticJsonDocument<64> identifyDoc;
-                        identifyDoc[F("msg")] = F("identity");
-                        identifyDoc[F("device")] = F("smartHome");
-                        serializeJson(identifyDoc, identifyMsg);
-                        sendWs(identifyMsg);
-                        return;
+                         String identifyMsg;
+                         StaticJsonDocument<64> identifyDoc;
+                         identifyDoc[F("msg")] = F("identity");
+                         identifyDoc[F("device")] = F("smartHome");
+                         serializeJson(identifyDoc, identifyMsg);
+                         sendWs(identifyMsg);
+                         return;
                      }
                      if (msgType == F("connected"))
                      {
-                        String loadReq;
-                        StaticJsonDocument<32> doc;
-                        doc[F("type")] = F("load");
-                        serializeJson(doc, loadReq);
-                        Serial.println(loadReq);
-                        delay(500);
-                        sendWs(loadReq);
-                        return;
+                         String loadReq;
+                         StaticJsonDocument<32> doc;
+                         doc[F("type")] = F("load");
+                         serializeJson(doc, loadReq);
+                         Serial.println(loadReq);
+                         delay(500);
+                         sendWs(loadReq);
+                         return;
                      }
-                     if(msgType == F("loadUp")){
+                     if (msgType == F("loadUp"))
+                     {
                          activated = true;
+                         securityMode = data[F("security")].as<bool>();
                          controllMode = data[F("controllMode")].as<String>() == F("manual");
                          maxBright = data[F("maxBright")].as<float>();
                          maxFlame = data[F("maxFlame")].as<float>();
                          maxTemp = data[F("maxTemp")].as<float>();
                          maxGas = data[F("maxGas")].as<float>();
 
-                         Serial.println(String(F("\ncontrollMode:\t")) + String(controllMode) +
-                                    F("\nmaxBright:\t") + String(maxBright) +
-                                    F("\nmaxFlame:\t") + String(smoke) +
-                                    F("\nmaxTemp:\t") + String(maxTemp) +
-                                    F("\nmaxGas:\t") + String(maxGas));
+                         Serial.println(String(F("\ncontrollMode:\t")) + (controllMode ? "manual" : "otomatis") +
+                                        F("\nsecurity:\t") + (securityMode ? "true" : "false") +
+                                        F("\nmaxBright:\t") + String(maxBright) +
+                                        F("\nmaxFlame:\t") + String(smoke) +
+                                        F("\nmaxTemp:\t") + String(maxTemp) +
+                                        F("\nmaxGas:\t") + String(maxGas));
                          return;
-                        } });
+                     }
+                     if (msgType == F("security mode"))
+                     {
+                         securityMode = details == F("1");
+                         Serial.println(String(F("Security mode is ")) + (securityMode ? F("On") : F("Off")));
+                         return;
+                     }
+                     if (msgType == F("turnOffNotif"))
+                     {
+                         pendingNotif = false;
+                         Serial.println(F("notif turned off"));
+                         noTone(buzzer);
+                     }
+                 });
 #if WAIT
     while (!activated)
         WebsocketRun();

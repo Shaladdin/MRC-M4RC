@@ -3,7 +3,7 @@
 #define DEBUG true
 
 volatile int jumlahOrang = 0;
-volatile bool emptyRoom = false;
+volatile bool emptyRoom = true;
 
 // room detection state
 #define EMPTY 0
@@ -51,6 +51,7 @@ void printState()
 
 void ICACHE_RAM_ATTR RoomDetectionRun()
 {
+    pendingNotif = true;
     ir Dalam = !digitalRead(irDalam);
     ir Luar = !digitalRead(irLuar);
 
@@ -84,7 +85,6 @@ void ICACHE_RAM_ATTR RoomDetectionRun()
         }
         state = EMPTY;
     }
-
 #if DEBUG
     printState();
 #endif

@@ -113,15 +113,15 @@ void SerialInit()
         nano.begin(9600);
         delay(1000);
     } while (!nano);
-    Serial.println(F("\nconnected to nano\n"));
 #if PINGGER
     sendCom(basicRes(F("ping")), 48);
     connectedToNano = true;
 #endif
+    // sendCom();
 #if WAIT
     while (!connectedToNano)
         SerialRun();
-
+    Serial.println(F("\nconnected to nano\n"));
 #endif
 }
 

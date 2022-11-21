@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <ArduinoJson.h>
+#include <RH_ASK.h>
+#include <SPI.h>
 #include <MQ2.h>
 #include <DHT.h>
 
@@ -39,5 +41,9 @@ extern bool connectedToEsp;
 void SerialInit();
 void SerialRun();
 void sendCom(String msg, int size, bool toSerial = false);
-void stream(String msg, int size);
+void stream(String &msg, int size);
 bool readSerial();
+
+// Ropi
+void RopiInit();
+void RopiRun();

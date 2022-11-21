@@ -24,7 +24,7 @@ for (const [key, value] of Object.entries(db)) {
 
 
 const { stringify, parse: jsonify } = JSON;
-const deserializeError = stringify({
+const desxerializeError = stringify({
     msg: "error",
     err: "input is not valid json, json only"
 })
@@ -36,13 +36,21 @@ const getAllData = async () => {
     }
     return output;
 }
+const StreamUsers = (f) => {
+    const { users } = usersModule;
+    for (const [key, value] of Object.entries(users))
+        f(key, value);
+}
+
 const updateStream = async () => {
     const { users } = usersModule;
     const data = await getAllData();
-    for (const [key, value] of Object.entries(users))
+    StreamUsers((key, value) => {
         if (value.mode.currentMode === 'sensorStream')
             value.ws.send(stringify(data));
+    })
 }
+// update device db
 const updateDevice = async (device, data) => {
     db.sensor.update({ robot: device }, { $set: { data: data } }, { upsert: true });
 }
@@ -65,6 +73,7 @@ const device = {
                         const { suhu, humidity, gas, flame, light, orang } = res.data;
                         data.suhu = suhu; data.api = flame; data.light = light; data.humidity = humidity; data.gas = gas; data.orang = orang;
                         updateDevice("smartHome", data);
+                        console.log(data);
                         updateStream();
                         return;
                     }
@@ -75,16 +84,30 @@ const device = {
                     return;
                 };
                 if (res.type === 'notify') {
-                    if (res.notify === 'security') {
-                        const { users } = usersModule;
-                        for (const [key, value] of Object.entries(users))
-                            value.ws.send(stringify({ msg: 'security alert' }));
-                        return;
+                    var msgOut;
+                    // #define securityAlert 0
+                    // #define gasAlert 1
+                    // #define flameAlert 2
+                    switch (res.notify) {
+                        case 0:
+                            msgOut = 'Security Alert';
+                            break;
+                        case 1:
+                            msgOut = 'Gas bocor terdeteksi';
+                            break;
+                        case 2:
+                            msgOut = 'Api terdeteksi';
+                            break;
+                        default:
+                            ws.send(stringify({
+                                msg: "error",
+                                err: "no notification found"
+                            }));
+                            break;
                     }
-                    ws.send(stringify({
-                        msg: "error",
-                        err: "no notification found"
-                    }));
+                    StreamUsers((key, value) => {
+                        value.ws.send(stringify({ msg: "alert", notify: msgOut }));
+                    })
                     return;
                 }
                 if (res.type === 'load') {
@@ -92,6 +115,7 @@ const device = {
                     ws.send(stringify({
                         "msg": "loadUp",
                         "data": {
+                            security: setting.security,
                             controllMode: setting.controllMode,
                             maxBright: setting.maxBright,
                             maxFlame: setting.maxFlame,
@@ -134,7 +158,7 @@ const device = {
             // set up for empty data
             var dbRead = await db.read(db.sensor, { robot: "smartHome" })
             var { data: dbData } = dbRead;
-            data.suhu = dbData.suhu; data.humidity = dbData.humidity; data.api = dbData.api; data.gas = dbData.gas; data.orang = dbData.orang; data.light = dbData.light;
+            data.suhu = dbData.suhu; data.humidity = dbData.humidity; data.api = dbData.api; data.gas = dbData.gas; data.orang = dbData.orang; data.light = dbData.light; data.security = dbData.security;
 
             return device.smartHome.data
         },
@@ -240,9 +264,11 @@ const usersModule = {
 
                 else if (res.msg === 'security mode') {
                     const { smartHome } = device;
-                    smartHome.data.security = res.mode;
 
+                    smartHome.data.security = res.mode;
                     updateDevice("smartHome", smartHome.data);
+
+                    updateStream();
 
                     if (smartHome.ws === undefined) return;
                     smartHome.ws.send(stringify({
@@ -296,7 +322,7 @@ wss.on('connection', (ws) => {
     // code for starting connection and handle web client
     ws.on('message', (msg) => {
 
-        ws.log(`incoming: ${msg}`);
+        // ws.log(`incoming: ${msg}`);
         // update stuffs
         updateWs();
 

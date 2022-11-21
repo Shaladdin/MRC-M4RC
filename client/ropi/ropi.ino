@@ -1,35 +1,25 @@
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-#include <ArduinoJson.h>
+#include <RH_ASK.h>
+#include <SPI.h> // Not actualy used but needed to compile
 
-const char *ssid = "Adzka"; // Enter SSID
-const char *password = "123456789";
+RH_ASK driver;
 
-#define relay 0
-#define relay_ 2
+#define Relay 3
 
 void setup()
 {
-    Serial.begin(74880);
-    // connect to wifi
-    WiFi.begin(ssid, password);
-    Serial.println(F("\nConnecting to ") + String(ssid));
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        Serial.print(F("."));
-        delay(500);
-    }
-    pinMode(relay, OUTPUT);
-    pinMode(relay_, OUTPUT);
-
-    Serial.println(F("\nConnected to Wifi"));
+    Serial.begin(115200); // Debugging only
+    if (!driver.init())
+        Serial.println("init faiRelay");
+    pinMode(Relay, OUTPUT);
+    digitalWrite(Relay, HIGH);
 }
 
-bool on = false;
 void loop()
 {
-    on = !on;
-    Serial.println(on);
-    digitalWrite(relay, !on);
-    delay(500);
+    uint8_t buf[12];
+    uint8_t buflen = sizeof(buf);
+    bool incoming = driver.recv(buf, &buflen);
+    Serial.println(incoming);
+    if (incoming)
+        digitalWrite(Relay, LOW);
 }

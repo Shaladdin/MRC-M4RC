@@ -67,20 +67,20 @@
 
 
 
-    .robobin{
+    /* .robobin{
         display: flex;
         justify-content: center;
-    }
+    } */
     .newSec {
         display: flex;
         max-width: 500px;
         width: 90%;
         margin: 15px auto;
     }
-/* 
+
     .robobin .title {
         max-width: 120px;
-    } */
+    }
 
     .bar {
         background-color: var(--darkGreen);
@@ -241,19 +241,44 @@
 
 
     /* smart remote */
-    #smartRemote {
-        display: flex;
-        justify-content: center;
-        flex-direction: row;
+    #smartRemote e{
+        margin: 10px auto;
+
     }
 
     #mode {
-        /* max-width: 485px; */
         padding-bottom: 15px;
     }
 
+    #mode e {}
+
     #mode .holder {
         height: 80px;
+    }
+
+    .lightLight {
+        background-color: #2B3245;
+        border-radius: 10px;
+    }
+
+    #apliences {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        max-width: 500px;
+    }
+
+    .aplience {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .aplience img {
+        height: 50px;
+        width: 50px;
+
     }
 </style>
 
@@ -308,13 +333,13 @@
                 </div>
             </div>
             <div class="robobin light newSec">
-                <!-- <div class="title">
+                <div class="title">
                     <h2>Robobin</h2>
                     <h4>kepenuhan sampah:</h4>
-                </div> -->
+                </div>
                 <div class="value">
                     <div id="metal">
-                        <h2>cahaya ruang:</h2>
+                        <h2>Sampah metal:</h2>
                         <div class="bar">
                             <div class="barFill">
                                 <h4>0%</h4>
@@ -322,7 +347,7 @@
                         </div>
                     </div>
                     <div id="nonMetal">
-                        <h2>kepekaan api:</h2>
+                        <h2>Sampah non metal</h2>
                         <div class="bar">
                             <div class="barFill">
                                 <h4>0%</h4>
@@ -363,6 +388,30 @@
                         </button>
                     </div>
             </div>
+            <div class="light" id="apliences">
+                <div class="aplience lightLight">
+                    <img src="./media/svg/lightbulb-Off.svg" alt="">
+                    <div class="textContent">
+                        <h2>Lampu</h2>
+                        <div class="holder">
+                            <button class="button">
+                                <h4>off</h4>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="aplience lightLight">
+                    <img src="./media/svg/Fan-Off.svg" alt="">
+                    <div class="textContent">
+                        <h2>Kipas</h2>
+                        <div class="holder">
+                            <button class="button">
+                                <h4>on</h4>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
@@ -370,7 +419,21 @@
 <script src="./js/ws.js"></script>
 <script src="./js/common.js"></script>
 
-<!-- websocket -->
+<!-- global var -->
+<script>
+    var currentSocket;
+</script>
+
+<!-- mode manual -->
+<script>
+    // mode manual
+    const modeButton = new button(document.getElementById('mode').lastElementChild.lastElementChild,
+        ['Otomatis', ':Manual:'], ['var(--lightGreen)', 'var(--white)'], ['var(--darkGreen)', 'var(--lightGreen)'], false, () => {
+
+        })
+</script>
+
+<!-- notification -->
 <script>
     // notify button
     const notify = document.getElementsByClassName('notify')[0];
@@ -378,8 +441,10 @@
     okButton.addEventListener('click', () => {
         notify.style.display = 'none';
     });
+</script>
 
-
+<!-- doc -->
+<script>
     const metal = {
         bar: document.getElementById("metal").lastElementChild.lastElementChild,
         text: HTMLElement
@@ -404,27 +469,21 @@
     };
 
     const doc = { dht, mq2, api, robobin, roomDetection };
-    var securityMode = false;
+</script>
 
-    function updateButton() {
-        doc.roomDetection.button.style.backgroundColor = securityMode ? 'var(--lightGreen)' : 'var(--backGreen)'
-        doc.roomDetection.button.lastElementChild.textContent = securityMode ? 'Aktif' : 'mati:';
-        doc.roomDetection.button.lastElementChild.style.color = securityMode ? 'white' : 'var(--lighterBack)';
-    }
-
-    init(socket => {
-        var connected, mode = false;
-
-        console.log(socket)
-        // security button
-        doc.roomDetection.button.addEventListener('click', () => {
-            securityMode = !securityMode;
-            updateButton();
-            socket.send(stringify({
+<!-- websocket -->
+<script>
+    const security = new button(doc.roomDetection.button, ['mati:', 'Aktif'],
+        ['var(--lighterBack)', 'white'], ['var(--backGreen)', 'var(--lightGreen)'],
+        false, (button_) => {
+            button_.socket.send(stringify({
                 msg: 'security mode',
-                mode: securityMode
+                mode: button_.state,
             }));
         })
+    init(socket => {
+        var connected, mode = false;
+        currentSocket = socket;
 
         socket.send(stringify({ msg: "connectClient" }));
         socket.addEventListener('message', (msg) => {
@@ -438,7 +497,8 @@
                 return;
             };
             if (!connected) return;
-            if (res.msg === 'security alert') {
+            if (res.msg === 'alert') {
+                notify.firstElementChild.innerText = res.notify + '!'
                 notify.style.display = 'flex';
             }
             if (res.msg === 'change mode response') {
@@ -453,29 +513,47 @@
                     const { round } = Math
                     const { smartHome, roboBin } = res;
 
+                    // buttons
+                    security.state = smartHome.security;
+                    modeButton.state = smartHome.controllMode == 'manual';
+
+                    const buttons = [security, modeButton];
+                    buttons.forEach((item) => {
+                        item.socket = socket;
+                        item.update();
+                    })
+
                     // Smart Home 
                     doc.dht.suhu.textContent = round(smartHome.suhu) + 'c°';
                     doc.dht.humidity.textContent = round(smartHome.humidity) + '%';
                     doc.api.style.backgroundColor = smartHome.api === true ? 'red' : 'var(--lightGreen)';
-                    doc.api.lastElementChild.style.color = smartHome.api === true ? 'var(--yellow)' : 'white';
-                    doc.api.lastElementChild.textContent = smartHome.api === true ? 'API!' : 'Aman';
 
-                    doc.mq2.co.textContent = round(smartHome.gas.co);
-                    doc.mq2.lpg.textContent = round(smartHome.gas.lpg);
-                    doc.mq2.smoke.textContent = round(smartHome.gas.smoke);
+                    {
+                        var api_ = smartHome.api > smartHome.maxFlame;
+                        const apiDoc = doc.api.lastElementChild;
+                        apiDoc.style.color = api_ ? 'var(--yellow)' : 'white';
+                        apiDoc.textContent = api_ ? 'API!' : 'Aman';
+                        apiDoc.parentElement.style.backgroundColor = api_ ? 'red' : 'var(--lightGreen)';
+                    }
+
+                    for (const [key, value] of Object.entries(doc.mq2)) {
+                        value.textContent = round(smartHome.gas[key]) + ' ppm';
+                        value.style.color = smartHome.gas[key] > smartHome.maxGas ? "red" : "var(--yellow)";
+                    }
 
                     // robobin
-                    doc.robobin.metal.text.textContent = round(smartHome.light) + '%';
-                    doc.robobin.metal.bar.style.width = smartHome.light + '%';
-
-                    doc.robobin.nonMetal.text.textContent = round(smartHome.api) + '%';
-                    doc.robobin.nonMetal.bar.style.width = smartHome.api + '%';
+                    for (const [key, value] of Object.entries(doc.robobin)) {
+                        value.text.textContent = round(roboBin[key]) + '%';
+                        value.bar.style.width = roboBin[key] + '%';
+                        value.bar.style.backgroundColor = roboBin[key] > 90 ? 'var(--yellow)' : 'var(--lightGreen)';
+                    }
 
                     // room detection
-                    doc.roomDetection.jumlah.style.color = smartHome.orang === 0 ? 'var(--backGreen)' : 'var(--yellow)';
+                    doc.roomDetection.jumlah.style.color = smartHome.orang === 0 ? 'var(--backGreen)' : security.state ? 'red' : 'var(--yellow)';
                     doc.roomDetection.jumlah.textContent = smartHome.orang;
                 }
             }
+
         });
     });
     // {
@@ -492,6 +570,8 @@
     //     }
     // }
 </script>
+
+<!-- switch button -->
 <script>
     // true = monitor, false remote
     var isMonitor = true;

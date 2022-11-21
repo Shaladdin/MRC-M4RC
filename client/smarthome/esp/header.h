@@ -6,8 +6,8 @@
 using namespace websockets;
 
 // outputs pin
-#define lamp D3
-#define fan D4
+#define lamp D1
+#define fan D2
 #define buzzer D0
 const int outputs[] = {lamp, fan, buzzer};
 
@@ -26,6 +26,9 @@ extern bool activated;
 
 // Security
 extern bool securityMode;
+extern volatile bool pendingNotif;
+void SecurityRun();
+
 
 // room detection
 extern volatile int jumlahOrang;

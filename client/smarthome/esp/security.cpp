@@ -1,11 +1,25 @@
 #include "header.h"
 bool securityMode = false;
+volatile bool pendingNotif = false;
 
-void SecurityMode(String &msgType, String &details, String &error)
+#define securityAlert 0
+#define gasAlert 1
+#define flameAlert 2
+
+void SecurityRun()
 {
-    if (msgType == F("security mode"))
+    if (!pendingNotif)
+        return;
+    pendingNotif = false;
+    if (!securityMode)
     {
-        securityMode = details == F("1");
-        Serial.println(String(F("Security mode is ")) + (securityMode ? F("On") : F("Off")));
+        noTone(buzzer);
+        return;
     }
+    if (emptyRoom)
+        return;
+    Serial.println(F("SECURITY BREACH!!!!"));
+    tone(buzzer, 1000);
+    String notify = F("{    \"type\":\"notify\",    \"notify\":\"security\"}");
+    sendWs(notify);
 }

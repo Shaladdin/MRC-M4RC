@@ -76,7 +76,7 @@ void debugSend(String &msg, bool fromSerial = false)
     Serial.println(fromSerial ? (String(F("message: ")) + msg) : (String(F("sending to esp:{\n")) + msg + F("\n}")));
 }
 
-void stream(String msg, int size)
+void stream(String &msg, int size)
 {
     Serial.println(F("Streaming to esp..."));
     esp.println(F("S"));

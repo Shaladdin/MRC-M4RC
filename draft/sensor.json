@@ -1,8 +1,8 @@
 {
     "type": "stream",
     "stream": "sensors",
-    "orang": 0,
     "data": {
+        "orang": 0,
         "suhu": 26.7,
         "humidity": 53,
         "flame": 2.8348,

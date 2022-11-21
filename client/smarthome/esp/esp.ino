@@ -10,9 +10,9 @@ void setup()
 {
     Serial.begin(115200);
     pinInit();
+    RoomDetectionInit();
     WebsocketInit();
     SerialInit();
-    RoomDetectionInit();
 }
 
 void loop()
@@ -20,6 +20,7 @@ void loop()
     SerialRun();
     WebsocketRun();
     SmartHomeRun();
+    SecurityRun();
 }
 
 // Draft
