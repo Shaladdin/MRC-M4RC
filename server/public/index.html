@@ -413,7 +413,7 @@
                 <h2>Home aplience</h2>
                 <div class="content">
                     <div class="aplience lightLight" id="lamp">
-                        <img src="./media/svg/lightbulb-Off.svg" alt="">
+                        <img src="./media/svg/lightbulb off.svg" alt="">
                         <div class="textContent">
                             <h4>Lampu</h4>
                             <div class="holder">
@@ -496,7 +496,7 @@
     const lamp = new button(lampElement.lastElementChild.lastElementChild.lastElementChild,
         ['Off', 'On'], ['var(--lighterBack)', 'var(--white'], ['var(--backGreen)', 'var(--lightGreen)'], false, (button_) => {
             const img = lampElement.firstElementChild;
-            img.src = imgDir + 'lightbulb-' + (button_.state ? 'On' : 'Off') + '.svg';
+            img.src = imgDir + 'lightbulb ' + (button_.state ? 'on' : 'off') + '.svg';
         }, (button_) => {
             button_.socket.send(stringify({
                 msg: 'manual controll',
