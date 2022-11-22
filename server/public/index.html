@@ -177,7 +177,7 @@
         position: fixed;
         bottom: 0;
         right: 0;
-        z-index: 999;
+        z-index: 9999;
 
         width: 100%;
         height: 100%;
@@ -241,16 +241,13 @@
 
 
     /* smart remote */
-    #smartRemote e{
-        margin: 10px auto;
-
-    }
-
     #mode {
         padding-bottom: 15px;
+        margin: 15px auto;
+        width: 90%;
+        max-width: 500px;
     }
 
-    #mode e {}
 
     #mode .holder {
         height: 80px;
@@ -262,10 +259,17 @@
     }
 
     #apliences {
+        max-width: 500px;
+        width: 90%;
+        margin: 10px auto;
+    }
+
+    #apliences .content {
         display: flex;
         flex-direction: row;
         justify-content: space-around;
-        max-width: 500px;
+        background-color: #00000000;
+
     }
 
     .aplience {
@@ -273,12 +277,29 @@
         flex-direction: row;
         align-items: center;
         padding: 10px;
+        width: 40%;
+    }
+
+    .aplience .textContent {
+        width: 80%;
     }
 
     .aplience img {
         height: 50px;
         width: 50px;
 
+    }
+
+    /* fan spinning animation */
+    @keyframes rotation {
+
+        from {
+            transform: rotate(359deg);
+        }
+
+        to {
+            transform: rotate(0deg);
+        }
     }
 </style>
 
@@ -389,29 +410,32 @@
                     </div>
             </div>
             <div class="light" id="apliences">
-                <div class="aplience lightLight">
-                    <img src="./media/svg/lightbulb-Off.svg" alt="">
-                    <div class="textContent">
-                        <h2>Lampu</h2>
-                        <div class="holder">
-                            <button class="button">
-                                <h4>off</h4>
-                            </button>
+                <h2>Home aplience</h2>
+                <div class="content">
+                    <div class="aplience lightLight" id="lamp">
+                        <img src="./media/svg/lightbulb-Off.svg" alt="">
+                        <div class="textContent">
+                            <h4>Lampu</h4>
+                            <div class="holder">
+                                <button class="button">
+                                    <h4>On</h4>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aplience lightLight" id="fan">
+                        <img src="./media/svg/Fan-Off.svg" alt="">
+                        <div class="textContent">
+                            <h4>Kipas</h4>
+                            <div class="holder">
+                                <button class="button">
+                                    <h4>On</h4>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="aplience lightLight">
-                    <img src="./media/svg/Fan-Off.svg" alt="">
-                    <div class="textContent">
-                        <h2>Kipas</h2>
-                        <div class="holder">
-                            <button class="button">
-                                <h4>on</h4>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div> 
+            </div>
         </div>
     </div>
 </body>
@@ -422,14 +446,63 @@
 <!-- global var -->
 <script>
     var currentSocket;
+    const imgDir = document.location.href.replace('index.html', '') + 'media/svg/'
 </script>
 
 <!-- mode manual -->
 <script>
     // mode manual
-    const modeButton = new button(document.getElementById('mode').lastElementChild.lastElementChild,
-        ['Otomatis', ':Manual:'], ['var(--lightGreen)', 'var(--white)'], ['var(--darkGreen)', 'var(--lightGreen)'], false, () => {
+    const apliencesElement = document.getElementById('apliences');
+    const fanElement = document.getElementById('fan');
+    const lampElement = document.getElementById('lamp');
 
+    const modeButton = new button(document.getElementById('mode').lastElementChild.lastElementChild,
+        ['Otomatis', 'Manual'], ['var(--lightGreen)', 'var(--white)'], ['var(--darkGreen)', 'var(--lightGreen)'], false, (button_) => {
+            apliencesElement.style.pointerEvents = button_.state ? 'auto' : 'none';
+            apliencesElement.style.opacity = button_.state ? '100%' : '30%';
+        }, (button_) => {
+            button_.socket.send(stringify({
+                msg: 'controll mode',
+                mode: button_.text[button_.state ? 1 : 0]
+            }));
+        })
+    const kipas = new button(fanElement.lastElementChild.lastElementChild.lastElementChild,
+        ['Off', 'On'], ['var(--lighterBack)', 'var(--white'], ['var(--backGreen)', 'var(--lightGreen)'], false, async (button_) => {
+            const img = fanElement.firstElementChild;
+            img.src = imgDir + 'Fan-' + (button_.state ? 'On' : 'Off') + '.svg';
+            if (button_.kipasState !== button_.state) {
+                button_.kipasState = button_.state
+                if (button_.state) {
+                    img.style.animation = "none";
+                    await delay(200);
+                    img.style.animation = "1.2s ease-in 0s 1 normal none running rotation";
+                    await delay(1000);
+                    img.style.animation = "1s linear 0s infinite normal none running rotation";
+                } else {
+                    img.style.animation = "none";
+                    await delay(1);
+                    img.style.animation = "1.2s ease-out 0s 1 normal none running rotation";
+                    await delay(1200);
+                    img.style.animation = "none";
+                }
+            }
+        }, (button_) => {
+            button_.socket.send(stringify({
+                msg: 'manual controll',
+                aplience: 'fan',
+                state: button_.state
+            }))
+        })
+    const lamp = new button(lampElement.lastElementChild.lastElementChild.lastElementChild,
+        ['Off', 'On'], ['var(--lighterBack)', 'var(--white'], ['var(--backGreen)', 'var(--lightGreen)'], false, (button_) => {
+            const img = lampElement.firstElementChild;
+            img.src = imgDir + 'lightbulb-' + (button_.state ? 'On' : 'Off') + '.svg';
+        }, (button_) => {
+            button_.socket.send(stringify({
+                msg: 'manual controll',
+                aplience: 'lamp',
+                state: button_.state
+            }))
         })
 </script>
 
@@ -440,6 +513,9 @@
     const okButton = notify.lastElementChild
     okButton.addEventListener('click', () => {
         notify.style.display = 'none';
+        currentSocket.send(stringify({
+            msg: 'ok'
+        }))
     });
 </script>
 
@@ -469,18 +545,20 @@
     };
 
     const doc = { dht, mq2, api, robobin, roomDetection };
-</script>
 
-<!-- websocket -->
-<script>
     const security = new button(doc.roomDetection.button, ['mati:', 'Aktif'],
         ['var(--lighterBack)', 'white'], ['var(--backGreen)', 'var(--lightGreen)'],
-        false, (button_) => {
+        false, () => { }, (button_) => {
             button_.socket.send(stringify({
                 msg: 'security mode',
                 mode: button_.state,
             }));
         })
+
+</script>
+
+<!-- websocket -->
+<script>
     init(socket => {
         var connected, mode = false;
         currentSocket = socket;
@@ -508,6 +586,8 @@
                     msg: "device data req"
                 }))
             }
+
+            // Streaming sensor
             if (mode === 'sensorStream') {
                 if (res.msg === undefined) {
                     const { round } = Math
@@ -515,12 +595,14 @@
 
                     // buttons
                     security.state = smartHome.security;
-                    modeButton.state = smartHome.controllMode == 'manual';
+                    modeButton.state = smartHome.controllMode == 'Manual';
+                    kipas.update(true, false, smartHome.aplience.fan);
+                    lamp.update(true, false, smartHome.aplience.lamp);
 
-                    const buttons = [security, modeButton];
+                    const buttons = [security, modeButton, kipas, lamp];
                     buttons.forEach((item) => {
                         item.socket = socket;
-                        item.update();
+                        item.update(true);
                     })
 
                     // Smart Home 
@@ -578,7 +660,6 @@
     const main = document.getElementById("main");
     const Switch = document.getElementById("switch");
     const Simg = Switch.firstChild;
-    const imgDir = document.location.href.replace('index.html', '') + 'media/svg/'
     const remote = 'remote.svg';
     const monitor = 'monitor.svg';
     const title = document.getElementsByTagName('header')[0].firstElementChild;

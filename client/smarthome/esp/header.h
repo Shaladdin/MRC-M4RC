@@ -26,7 +26,7 @@ extern bool activated;
 
 // Security
 extern bool securityMode;
-extern volatile bool pendingNotif;
+extern volatile int pendingNotif;
 void SecurityRun();
 
 

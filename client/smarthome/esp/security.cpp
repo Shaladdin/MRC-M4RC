@@ -1,25 +1,44 @@
 #include "header.h"
 bool securityMode = false;
-volatile bool pendingNotif = false;
+volatile int pendingNotif = false;
 
-#define securityAlert 0
-#define gasAlert 1
-#define flameAlert 2
+#define securityAlert 1
+#define gasAlert 2
+#define flameAlert 3
 
 void SecurityRun()
 {
+    // if intruder come in
+    if (securityMode && !emptyRoom)
+        pendingNotif = securityAlert;
+
+    // if fire detected
+    if (flame > maxFlame)
+        pendingNotif = flameAlert;
+
+    // if unusual gas detected
+    float gas[] = {lpg, co, smoke};
+    for (float x : gas)
+        if (x > maxGas)
+        {
+            pendingNotif = gasAlert;
+            break;
+        }
+
+    NotifRun();
+}
+
+void NotifRun()
+{
     if (!pendingNotif)
         return;
+    // send it to websocket
+    String out;
+    StaticJsonDocument<64> doc;
+    doc[F("type")] = F("notify");
+    doc[F("notify")] = pendingNotif;
     pendingNotif = false;
-    if (!securityMode)
-    {
-        noTone(buzzer);
-        return;
-    }
-    if (emptyRoom)
-        return;
-    Serial.println(F("SECURITY BREACH!!!!"));
     tone(buzzer, 1000);
-    String notify = F("{    \"type\":\"notify\",    \"notify\":\"security\"}");
-    sendWs(notify);
+    serializeJson(doc, out);
+    sendWs(out);
 }

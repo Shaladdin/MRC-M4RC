@@ -66,7 +66,7 @@ const device = {
 
             ws.on('message', (msg) => {
                 let res = objify(msg);
-                if (res === false) { ws.send(deserializeError); return; };
+                if (res === false) { ws.log('error?:'); ws.log(res); return; };
                 // if stream
                 if (res.type === 'stream') {
                     if (res.stream === 'sensors') {
@@ -89,13 +89,13 @@ const device = {
                     // #define gasAlert 1
                     // #define flameAlert 2
                     switch (res.notify) {
-                        case 0:
+                        case 1:
                             msgOut = 'Security Alert';
                             break;
-                        case 1:
+                        case 2:
                             msgOut = 'Gas bocor terdeteksi';
                             break;
-                        case 2:
+                        case 3:
                             msgOut = 'Api terdeteksi';
                             break;
                         default:
@@ -144,11 +144,16 @@ const device = {
                 smoke: undefined
             },
             // setting
-            controllMode: "otomatis",
+            controllMode: "Otomatis",
             maxBright: 80.0,
             maxFlame: 20.0,
             maxTemp: 29.0,
             maxGas: 1.0,
+            // home apliences
+            aplience: {
+                fan: false,
+                lam: false,
+            }
         },
         mode: 'automatic',
         getData: async () => {
@@ -158,8 +163,8 @@ const device = {
             // set up for empty data
             var dbRead = await db.read(db.sensor, { robot: "smartHome" })
             var { data: dbData } = dbRead;
-            data.suhu = dbData.suhu; data.humidity = dbData.humidity; data.api = dbData.api; data.gas = dbData.gas; data.orang = dbData.orang; data.light = dbData.light; data.security = dbData.security;
-
+            for (const [key, value] of Object.entries(data))
+                data[key] = dbData[key];
             return device.smartHome.data
         },
     },
@@ -252,26 +257,56 @@ const usersModule = {
             this.mode = mode;
             //Switch the mode 
             ws.on('message', (msg) => {
+                const { smartHome } = device;
                 let res = objify(msg);
+
+                function sendSmartHome(msg_ = String(msg)) {
+                    if (smartHome.ws === undefined) return;
+                    smartHome.ws.send(msg_);
+                }
+
                 ws.log('incoming: ' + msg);
                 if (res.msg === "change mode") {
                     mode.currentMode = res.mode;
                     mode.script[res.mode]();
                     return;
                 }
+                if (res.msg === 'controll mode') {
+                    smartHome.data.controllMode = res.mode;
+                    updateDevice("smartHome", smartHome.data);
+                    updateStream();
+
+                    sendSmartHome(stringify({
+                        msg: 'change mode',
+                        details: res.mode,
+                    }))
+                    return;
+                }
+                if (res.msg === 'manual controll') {
+                    if (smartHome.data.controllMode !== 'Manual')
+                        return;
+                    smartHome.data.aplience[res.aplience] = res.state;
+                    updateDevice('smartHome', smartHome.data);
+                    updateStream();
+
+                    sendSmartHome(stringify({
+                        msg: 'manual contoll',
+                        data: {
+                            aplience: res.aplience,
+                            state: res.state,
+                        }
+                    }));
+                }
+                if (res.msg === 'ok')
+                    sendSmartHome();
                 if (res.msg === "device data req")
                     updateStream();
-
                 else if (res.msg === 'security mode') {
-                    const { smartHome } = device;
-
                     smartHome.data.security = res.mode;
                     updateDevice("smartHome", smartHome.data);
-
                     updateStream();
 
-                    if (smartHome.ws === undefined) return;
-                    smartHome.ws.send(stringify({
+                    sendSmartHome(stringify({
                         msg: 'security mode',
                         details: res.mode ? "1" : "0"
                     }))
@@ -317,7 +352,7 @@ wss.on('connection', (ws) => {
     ws.allowStream = false;
     ws.device = "unknown";
     // send log
-    ws.log = (logout) => { console.log(`${ws.device}: ${logout}`) };
+    ws.log = (logout) => { console.log(ws.device, ':', logout) };
     const { log } = ws;
     // code for starting connection and handle web client
     ws.on('message', (msg) => {
